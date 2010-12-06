@@ -1,0 +1,4 @@
+project cradle/test
+  ;
+
+build-project preprocessor ;

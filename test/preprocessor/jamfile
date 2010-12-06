@@ -1,0 +1,12 @@
+project cradle/test/preprocessor
+  ;
+
+import path ;
+
+for local i in [ path.glob . : *_compile.cpp ]
+{
+  compile
+    $(i)
+    : <use>/cradle/ext/boost//headers
+    ;
+}

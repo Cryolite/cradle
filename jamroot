@@ -1,0 +1,11 @@
+path-constant CRADLE_ROOT : . ;
+
+project cradle
+  : requirements
+    <toolset>gcc:<cxxflags>-std=c++0x
+    <include>.
+    <c++-template-depth>1024
+  : build-dir bin
+  ;
+
+use-project /cradle/ext/boost : ext/boost ;

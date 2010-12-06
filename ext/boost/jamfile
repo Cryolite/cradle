@@ -1,0 +1,51 @@
+project cradle/ext/boost
+  ;
+
+import boost ;
+boost.use-project ;
+
+alias headers
+  : /boost//headers
+  ;
+
+alias date_time
+  : /boost//date_time
+  ;
+
+alias iostreams
+  : /boost//iostreams
+  ;
+
+alias filesystem
+  : /boost//system
+    /boost//filesystem
+  ;
+
+alias mpi
+  : /boost//serialization
+    /boost//mpi
+  ;
+
+alias program_options
+  : /boost//program_options
+  ;
+
+alias regex
+  : /boost//regex
+  ;
+
+alias serialization
+  : /boost//serialization
+  ;
+
+alias system
+  : /boost//system
+  ;
+
+alias thread
+  : /boost//thread
+  ;
+
+alias unit_test_framework
+  : /boost//unit_test_framework
+  ;
