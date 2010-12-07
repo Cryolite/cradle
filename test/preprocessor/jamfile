@@ -3,12 +3,4 @@ project cradle/test/preprocessor
 
 path-constant HERE : . ;
 
-import path ;
-
-for local i in [ path.glob $(HERE) : *_compile.cpp ]
-{
-  compile
-    $(i)
-    : <dependency>/cradle/ext/boost//headers
-    ;
-}
+build-project va ;
