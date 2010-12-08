@@ -1,0 +1,16 @@
+#if !defined(CRADLE_PREPROCESSOR_VA_DETAIL_TUPLE_HEAD_HPP_INCLUDE_GUARD)
+#define CRADLE_PREPROCESSOR_VA_DETAIL_TUPLE_HEAD_HPP_INCLUDE_GUARD
+
+
+#define CRADLE_PP_VA_TUPLE_HEAD_IMPL_B(HEAD, ...) HEAD
+
+#define CRADLE_PP_VA_TUPLE_HEAD_IMPL_A(VA_TUPLE) \
+CRADLE_PP_VA_TUPLE_HEAD_IMPL_B VA_TUPLE          \
+//////////////////////////////////////////////////
+
+#define CRADLE_PP_VA_TUPLE_HEAD(...)          \
+CRADLE_PP_VA_TUPLE_HEAD_IMPL_A((__VA_ARGS__)) \
+///////////////////////////////////////////////
+
+
+#endif // !defined(CRADLE_PREPROCESSOR_VA_DETAIL_TUPLE_HEAD_HPP_INCLUDE_GUARD)

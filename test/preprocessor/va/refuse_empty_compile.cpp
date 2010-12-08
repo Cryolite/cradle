@@ -1,5 +1,6 @@
 #include <cradle/preprocessor/va/refuse_empty.hpp>
 
+
 CRADLE_PP_VA_REFUSE_EMPTY(a)
 CRADLE_PP_VA_REFUSE_EMPTY(a, b)
 CRADLE_PP_VA_REFUSE_EMPTY(a,)
