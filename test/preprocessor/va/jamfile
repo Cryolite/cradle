@@ -1,4 +1,6 @@
 project cradle/test/preprocessor/va
+  : requirements
+    <toolset>msvc:<cxxflags>"/we4003"
   ;
 
 path-constant HERE : . ;
@@ -7,8 +9,22 @@ import path ;
 
 for local i in [ path.glob $(HERE) : *_compile.cpp ]
 {
+  local target-name = $(i:B) ;
   compile
-    $(i)
-    : <dependency>/cradle/ext/boost//headers
+      $(i)
+      /cradle/ext/boost//headers
+    : # requirements
+    : $(target-name)
+    ;
+}
+
+for local i in [ path.glob $(HERE) : *_compile_fail.cpp ]
+{
+  local target-name = $(i:B) ;
+  compile-fail
+      $(i)
+      /cradle/ext/boost//headers
+    : # requirements
+    : $(target-name)
     ;
 }

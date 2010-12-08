@@ -1,0 +1,15 @@
+#include <cradle/preprocessor/va/refuse_empty.hpp>
+
+CRADLE_PP_VA_REFUSE_EMPTY(a)
+CRADLE_PP_VA_REFUSE_EMPTY(a, b)
+CRADLE_PP_VA_REFUSE_EMPTY(a,)
+CRADLE_PP_VA_REFUSE_EMPTY(,b)
+CRADLE_PP_VA_REFUSE_EMPTY(,)
+
+#define MACRO(...) CRADLE_PP_VA_REFUSE_EMPTY(__VA_ARGS__)
+
+MACRO(a)
+MACRO(a, b)
+MACRO(a,)
+MACRO(,b)
+MACRO(,)
