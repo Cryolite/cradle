@@ -9,6 +9,8 @@
 #include <boost/preprocessor/debug/assert.hpp>
 
 
+//BOOST_PP_ASSERT(BOOST_PP_EQUAL(CRADLE_PP_VA_SIZE(), 2))
+//BOOST_PP_ASSERT(BOOST_PP_EQUAL(CRADLE_PP_VA_SIZE( ), 2))
 BOOST_PP_ASSERT(BOOST_PP_EQUAL(CRADLE_PP_VA_SIZE(0), 1))
 BOOST_PP_ASSERT(BOOST_PP_EQUAL(CRADLE_PP_VA_SIZE(0 ), 1))
 BOOST_PP_ASSERT(BOOST_PP_EQUAL(CRADLE_PP_VA_SIZE( 0), 1))
@@ -28,6 +30,6 @@ BOOST_PP_ASSERT(BOOST_PP_EQUAL(CRADLE_PP_VA_SIZE( 0, 1 ), 2))
 BOOST_PP_ASSERT(                                                           \
   BOOST_PP_EQUAL(                                                          \
     CRADLE_PP_VA_SIZE(BOOST_PP_CAT(BOOST_PP_ENUM_, Z)(N, MACRO_1, _)), N)) \
-  /**/
+////////////////////////////////////////////////////////////////////////////
 
 BOOST_PP_REPEAT_FROM_TO(3, BOOST_PP_ADD(CRADLE_PP_LIMIT_VA, 1), MACRO_0, _)
