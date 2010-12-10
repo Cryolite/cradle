@@ -1,6 +1,4 @@
 project cradle/test/preprocessor/va
-  : requirements
-    <toolset>msvc:<cxxflags>"/we4003"
   ;
 
 path-constant HERE : . ;
