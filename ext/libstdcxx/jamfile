@@ -1,0 +1,15 @@
+project cradle/ext/libstdcxx ;
+
+obj uncaught_exceptions.obj : uncaught_exceptions.cpp ;
+explicit uncaught_exceptions.obj ;
+
+exe uncaught_exceptions.exe : uncaught_exceptions.obj ;
+explicit uncaught_exceptions.exe ;
+
+run uncaught_exceptions.exe
+  : # no argument
+  : # no input file
+  : # no requirement
+  : uncaught_exceptions.run
+  ;
+explicit uncaught_exceptions.run ;

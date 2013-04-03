@@ -3,30 +3,43 @@ project cradle/test/preprocessor
     <toolset>msvc:<cxxflags>"/we4003"
   ;
 
-path-constant HERE : . ;
-
-build-project va ;
-
+import regex ;
 import path ;
 
-for local i in [ path.glob $(HERE) : *_compile.cpp ]
-{
-  local target-name = $(i:B) ;
-  compile
-      $(i)
-      /cradle/ext/boost//headers
-    : # requirements
-    : $(target-name)
-    ;
+local .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
+.here = [ path.make "$(.here)" ] ;
+
+local .tests ;
+
+#for local i in [ path.glob "$(.here)" : *_compile.cpp ] {
+#  local target-name = "$(i:B)" ;
+#  compile "$(i)"
+#    : # requirements
+#      $(CRADLE_COMPILE_PROPERTIES)
+#    : "$(target-name)"
+#    ;
+#  .tests += "$(target-name)" ;
+#}
+
+#for local i in [ path.glob "$(.here)" : *_compile_fail.cpp ] {
+#  local target-name = "$(i:B)" ;
+#  compile-fail "$(i)"
+#    : # requirements
+#      $(CRADLE_COMPILE_PROPERTIES)
+#    : "$(target-name)"
+#    ;
+#  .tests += "$(target-name)" ;
+#}
+
+local .direct-subdirs ;
+for local i in [ path.glob "$(.here)" : * ] {
+  local ph = [ path.native "$(i)" ] ;
+  if [ SHELL "test -e \"$(ph)/jamfile\" && echo -n 'x'" ] = "x" {
+    .direct-subdirs += "$(i)" ;
+  }
 }
 
-for local i in [ path.glob $(HERE) : *_compile_fail.cpp ]
-{
-  local target-name = $(i:B) ;
-  compile-fail
-      $(i)
-      /cradle/ext/boost//headers
-    : # requirements
-    : $(target-name)
-    ;
-}
+alias tests
+  : "$(.direct-subdirs)//tests"
+    "$(.tests)"
+  ;

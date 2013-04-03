@@ -1,4 +1,41 @@
-project cradle/test
-  ;
+if "$(CRADLE_WITH_INTRO)" {
+  project cradle/test
+    : default-build
+      <memory-checker>on
+      <libstdc++-debug-mode>on
+      <catchsegv>on
+      <cradle-checking>on
+      <source>/cradle/ext/boost//headers
+    ;
+}
+else {
+  project cradle/test
+    : default-build
+      #<toolset>gcc:<define>_GLIBCXX_DEBUG
+      #<toolset>gcc:<define>_GLIBCXX_DEBUG_PEDANTIC
+      #<toolset>clang:<define>_GLIBCXX_DEBUG
+      #<toolset>clang:<define>_GLIBCXX_DEBUG_PEDANTIC
+      #<toolset>intel:<define>_GLIBCXX_DEBUG
+      #<toolset>intel:<define>_GLIBCXX_DEBUG_PEDANTIC
+      #<toolset>clang:<cflags>-fsanitize=address
+      <cradle-checking>on
+    ;
+}
 
-build-project preprocessor ;
+import regex ;
+import path ;
+
+local .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
+.here = [ path.make "$(.here)" ] ;
+
+local .direct-subdirs ;
+for local i in [ path.glob "$(.here)" : * ] {
+  local ph = [ path.native "$(i)" ] ;
+  if [ SHELL "test -e \"$(ph)/jamfile\" && echo -n 'x'" ] = "x" {
+    .direct-subdirs += "$(i)" ;
+  }
+}
+
+alias tests
+  : "$(.direct-subdirs)//tests"
+  ;

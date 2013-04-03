@@ -1,11 +1,83 @@
 path-constant CRADLE_ROOT : . ;
 
-project cradle
-  : requirements
-    <toolset>gcc:<cxxflags>-std=c++0x
-    <include>.
-    <c++-template-depth>1024
-  : build-dir bin
+import feature ;
+import option ;
+
+
+local with-intro = [ option.get "intro" : "UNSPECIFIED" : "IMPLIED" ] ;
+switch "$(with-intro)" {
+case "UNSPECIFIED" :
+  with-intro = "no" ;
+case "IMPLIED" :
+  with-intro = "yes" ;
+case "yes" :
+  with-intro = "yes" ;
+case "no" :
+  with-intro = "yes" ;
+case "" :
+  errors.error "the value specified for `--intro' is empty." ;
+case "*" :
+  errors.error "an invalid value `$(with-intro)' is specified for `--intro'." ;
+}
+constant CRADLE_WITH_INTRO : "$(with-intro)" ;
+
+
+feature.feature cradle-checking
+  : off on pedantic
+  : propagated composite
+  ;
+feature.compose <cradle-checking>on
+  : <define>CRADLE_CHECKING
+  ;
+feature.compose <cradle-checking>pedantic
+  : <define>CRADLE_CHECKING
+    <define>CRADLE_CHECKING_PEDANTIC
   ;
 
+
+if "$(CRADLE_WITH_INTRO)" {
+  project cradle
+    : requirements
+      <std>c++11
+      <threading>single:<define>CRADLE_SINGLE_THREADING
+      <threading>multi:<define>CRADLE_MULTI_THREADING
+      <include>.
+      <warnings>all
+      <c++-template-depth>1024
+      <runtime-link>shared
+      <hardcode-dll-paths>false
+      <linkflags>"-Wl,--no-allow-shlib-undefined"
+    : build-dir bin
+    ;
+  constant CRADLE_COMPILE_PROPERTIES : $(INTRO_COMPILE_PROPERTIES) ;
+}
+else {
+  project cradle
+    : requirements
+      <toolset>gcc:<cxxflags>-std=c++0x
+      <toolset>clang:<cxxflags>-std=c++11
+      <toolset>intel:<cxxflags>-std=c++11
+      <threading>single:<define>CRADLE_SINGLE_THREADING
+      <threading>multi:<define>CRADLE_MULTI_THREADING
+      <include>.
+      <warnings>all
+      <c++-template-depth>1024
+      <runtime-link>shared
+      <hardcode-dll-paths>false
+      <linkflags>"-Wl,--no-allow-shlib-undefined"
+    : build-dir bin
+    ;
+  constant CRADLE_COMPILE_PROPERTIES : ;
+}
+
+
+use-project /cradle/ext/glibc : ext/glibc ;
+use-project /cradle/ext/libstdcxx : ext/libstdcxx ;
 use-project /cradle/ext/boost : ext/boost ;
+use-project /cradle/src : src ;
+
+
+alias check
+  : test//tests
+  ;
+explicit check ;

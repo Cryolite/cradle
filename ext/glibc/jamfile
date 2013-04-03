@@ -1,0 +1,15 @@
+project cradle/ext/glibc ;
+
+obj backtrace.obj : backtrace.cpp ;
+explicit backtrace.obj ;
+
+exe backtrace.exe : backtrace.obj ;
+explicit backtrace.exe ;
+
+run backtrace.exe
+  : # no argument
+  : # no input file
+  : # no requirement
+  : backtrace.run
+  ;
+explicit backtrace.run ;
