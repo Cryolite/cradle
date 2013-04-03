@@ -35,7 +35,7 @@ feature.compose <cradle-checking>pedantic
   ;
 
 
-if "$(CRADLE_WITH_INTRO)" {
+if "$(CRADLE_WITH_INTRO)" = "yes" {
   project cradle
     : requirements
       <std>c++11
@@ -50,6 +50,8 @@ if "$(CRADLE_WITH_INTRO)" {
     : build-dir bin
     ;
   constant CRADLE_COMPILE_PROPERTIES : $(INTRO_COMPILE_PROPERTIES) ;
+  constant CRADLE_LINK_PROPERTIES : $(INTRO_LINK_PROPERTIES) ;
+  constant CRADLE_RUN_PROPERTIES : $(INTRO_RUN_PROPERTIES) ;
 }
 else {
   project cradle
@@ -67,7 +69,9 @@ else {
       <linkflags>"-Wl,--no-allow-shlib-undefined"
     : build-dir bin
     ;
-  constant CRADLE_COMPILE_PROPERTIES : ;
+  #constant CRADLE_COMPILE_PROPERTIES : ;
+  #constant CRADLE_LINK_PROPERTIES : ;
+  #constant CRADLE_RUN_PROPERTIES : ;
 }
 
 
@@ -75,6 +79,7 @@ use-project /cradle/ext/glibc : ext/glibc ;
 use-project /cradle/ext/libstdcxx : ext/libstdcxx ;
 use-project /cradle/ext/boost : ext/boost ;
 use-project /cradle/src : src ;
+use-project /cradle/src/exception : src/exception ;
 
 
 alias check

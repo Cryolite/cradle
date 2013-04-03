@@ -2,4 +2,6 @@ project cradle/src
   : requirements
     [ check-target-builds /cradle/ext/glibc//backtrace.run : <define>CRADLE_HAS_GLIBC_BACKTRACE ]
     [ check-target-builds /cradle/ext/libstdcxx//uncaught_exceptions.run : <define>CRADLE_HAS_LIBSTDCXX_UNCAUGHT_EXCEPTIONS ]
+    <source>/cradle/ext/boost//headers_compile
+    <library>/cradle/ext/boost//headers_link
   ;

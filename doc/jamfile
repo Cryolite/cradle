@@ -1,0 +1,13 @@
+project cradle/doc
+  ;
+
+import boostbook : boostbook ;
+
+boostbook doc
+  : cradle.xml
+  : <dependency>exception/exception.xml
+  ;
+
+install css : [ glob *.css ] : <location>html ;
+install images : [ glob images/*.png ] : <location>html/images ;
+install callouts : [ glob images/callouts/*.png ] : <location>html/images/callouts ;

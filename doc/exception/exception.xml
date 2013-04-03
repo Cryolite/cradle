@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE library PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN"
+  "http://www.boost.org/tools/boostbook/dtd/1.1/boostbook.dtd">
+<library name="Exception" dirname="exception" xmlns:xi="http://www.w3.org/2001/XInclude" 
+         id="exception" last-revision="2013-04-03">
+  <libraryinfo>
+    <author>
+      <personname>
+        <firstname>Cryolite</firstname>
+      </personname>
+    </author>
+    <copyright>
+      <year>2013</year>
+      <holder>Cryolite</holder>
+    </copyright>
+    <legalnotice>
+      <para>
+        Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file <filename>LICENSE_1_0.txt</filename> or copy at
+        <ulink url="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</ulink>)
+      </para>
+    </legalnotice>
+    <librarypurpose>Library manuplating exceptions</librarypurpose>
+    <librarycategory>Language Features Emulation</librarycategory>
+  </libraryinfo>
+
+  <title>Cradle.Exception</title>
+
+  <library-reference>
+    <header name="cradle/exception/uncaught_exception.hpp">
+      <namespace name="cradle">
+        <namespace name="exceptions">
+          <function name="get_num_uncaught_exceptions">
+            <type>std::size_t</type>
+            <purpose>
+              <simpara>
+                Returns the number of uncaught exceptions.
+              </simpara>
+            </purpose>
+            <description>
+              <para>
+                <termdef>
+                  A <firstterm>direct predecessor of an
+                  evaluation</firstterm> <replaceable>X</replaceable> is an
+                  evaluation <replaceable>Y</replaceable> that satisfies the
+                  following conditions; <replaceable>Y</replaceable> is
+                  sequenced before <replaceable>X</replaceable>, and there
+                  is no other evaluation <replaceable>Z</replaceable> such
+                  that
+                  <replaceable>Z</replaceable> is sequenced before
+                  <replaceable>X</replaceable> and
+                  <replaceable>Y</replaceable> is sequenced before
+                  <replaceable>Z</replaceable>.
+                </termdef>
+              </para>
+              <para>
+                <termdef>
+                  The <firstterm>number of uncaught exceptions</firstterm>
+                  is a natural number defined for every evaluation in a
+                  well-formed program. The number of uncaught exceptions is
+                  defined as <inlineequation>0</inlineequation> for
+                  evaluations that do not have any direct predecessor. The
+                  number of uncaught exceptions is defined as
+                  <inlineequation>n + 1</inlineequation> for an evaluation
+                  if it is one of a throw expression and the number of
+                  uncaught exceptions for one of the direct predecessors of
+                  the evaluation is <inlineequation>n</inlineequation>. The
+                  number of uncaught exceptions is defined as
+                  <inlineequation>n - 1</inlineequation> for an evaluation
+                  if it is one of the initialization for the formal
+                  parameter of a catch clause and the number of uncaught
+                  exceptions for one of the direct predecessor of the
+                  evaluation is <inlineequation>n</inlineequation>.
+                </termdef>
+                <footnote>
+                  <simpara>
+                    It cannot happen that the numbers of uncaught exceptions
+                    are different among the direct ancestors of an
+                    evaluation in any well-defined program.
+                  </simpara>
+                </footnote>
+              </para>
+            </description>
+            <returns>
+              <simpara>The number of uncaught exceptions.</simpara>
+            </returns>
+            <throws>
+              <simpara>
+                Nothing.
+              </simpara>
+            </throws>
+          </function>
+        </namespace>
+      </namespace>
+    </header>
+  </library-reference>
+</library>

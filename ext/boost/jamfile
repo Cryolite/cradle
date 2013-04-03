@@ -1,51 +1,33 @@
 project cradle/ext/boost
   ;
 
-import boost ;
-boost.use-project ;
+import modules ;
 
-alias headers
-  : /boost//headers
-  ;
+local .boost-root = [ modules.peek : BOOST_ROOT ] ;
 
-alias date_time
-  : /boost//date_time
-  ;
+for local i in headers chrono date_time filesystem graph graph_parallel
+               iostreams locale math_c99 math_c99f math_c99l math_tr1
+               math_tr1f math_tr1l mpi prg_exec_monitor program_options
+               python random regex serialization signals system
+               test_exec_monitor thread timer unit_test_framework wave
+               wserialization
+{
+  alias "$(i)_compile"
+    : "/site-config//boost_$(i)_compile"
+    ;
+  explicit "$(i)_compile" ;
+  alias "$(i)_link"
+    : "/site-config//boost_$(i)_link"
+    ;
+  explicit "$(i)_link" ;
+}
 
-alias iostreams
-  : /boost//iostreams
+alias "exception_compile"
+  : "/site-config//boost_exception_compile/<link>static"
   ;
+explicit "exception_compile" ;
 
-alias filesystem
-  : /boost//system
-    /boost//filesystem
+alias "exception_link"
+  : "/site-config//boost_exception_link/<link>static"
   ;
-
-alias mpi
-  : /boost//serialization
-    /boost//mpi
-  ;
-
-alias program_options
-  : /boost//program_options
-  ;
-
-alias regex
-  : /boost//regex
-  ;
-
-alias serialization
-  : /boost//serialization
-  ;
-
-alias system
-  : /boost//system
-  ;
-
-alias thread
-  : /boost//thread
-  ;
-
-alias unit_test_framework
-  : /boost//unit_test_framework
-  ;
+explicit "exception_link" ;

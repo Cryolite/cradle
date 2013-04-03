@@ -1,0 +1,105 @@
+project cradle/test/exception
+  : requirements
+    <source>/cradle/src/exception//compile
+    <library>/cradle/src/exception//link
+  ;
+
+import regex ;
+import path ;
+
+if "$(CRADLE_WITH_INTRO)" {
+  import site-config ;
+}
+
+local .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
+.here = [ path.make "$(.here)" ] ;
+
+local .tests ;
+
+for local i in [ path.glob "$(.here)" : *_compile.cpp ] {
+  compile "$(i)"
+    : # requirements
+      $(CRADLE_COMPILE_PROPERTIES)
+    : "$(i:B)"
+    ;
+  explicit "$(i:B)" ;
+  .tests += "$(i:B)" ;
+}
+
+for local i in [ path.glob "$(.here)" : *_compile_fail.cpp ] {
+  compile-fail "$(i)"
+    : # requirements
+      $(CRADLE_COMPILE_PROPERTIES)
+    : "$(i:B)"
+    ;
+  explicit "$(i:B)" ;
+  .tests += "$(i:B)" ;
+}
+
+for local i in [ path.glob "$(.here)" : *_link.cpp ] {
+  obj "$(i:B).obj" : "$(i)" : $(CRADLE_COMPILE_PROPERTIES) ;
+  explicit "$(i:B).obj" ;
+  link "$(i:B).obj"
+    : # requirements
+      $(CRADLE_LINK_PROPERTIES)
+    : "$(i:B)"
+    ;
+  explicit "$(i:B)" ;
+  .tests += "$(i:B)" ;
+}
+
+for local i in [ path.glob "$(.here)" : *_link_fail.cpp ] {
+  obj "$(i:B).obj" : "$(i)" : $(CRADLE_COMPILE_PROPERTIES) ;
+  explicit "$(i:B).obj" ;
+  link-fail "$(i)"
+    : # requirements
+      $(CRADLE_LINK_PROPERTIES)
+    : "$(i:B)"
+    ;
+  explicit "$(i:B)" ;
+  .tests += "$(i:B)" ;
+}
+
+for local i in [ path.glob "$(.here)" : *_run.cpp ] {
+  obj "$(i:B).obj" : "$(i)" : $(CRADLE_COMPILE_PROPERTIES) ;
+  explicit "$(i:B).obj" ;
+  exe "$(i:B).exe" : "$(i:B).obj" : $(CRADLE_LINK_PROPERTIES) ;
+  explicit "$(i:B).exe" ;
+  run "$(i:B).exe"
+    : # No arg
+    : # No input-file
+    : # requirements
+      $(CRADLE_RUN_PROPERTIES)
+    : "$(i:B)"
+    ;
+  explicit "$(i:B)" ;
+  .tests += "$(i:B)" ;
+}
+
+for local i in [ path.glob "$(.here)" : *_run_fail.cpp ] {
+  obj "$(i:B).obj" : "$(i)" : $(CRADLE_COMPILE_PROPERTIES) ;
+  explicit "$(i:B).obj" ;
+  exe "$(i:B).exe" : "$(i:B).obj" : $(CRADLE_LINK_PROPERTIES) ;
+  explicit "$(i:B).exe" ;
+  run-fail "$(i:B).exe"
+    : # No arg
+    : # No input-file
+    : # requirements
+      $(CRADLE_RUN_PROPERTIES)
+    : "$(i:B)"
+    ;
+  explicit "$(i:B)" ;
+  .tests += "$(i:B)" ;
+}
+
+local .direct-subdirs ;
+for local i in [ path.glob "$(.here)" : * ] {
+  if [ path.exists "$(i)/jamfile" ] {
+    .direct-subdirs += "$(i:B)" ;
+  }
+}
+
+alias tests
+  : "$(.direct-subdirs)//tests"
+    "$(.tests)"
+  ;

@@ -5,7 +5,10 @@ if "$(CRADLE_WITH_INTRO)" {
       <libstdc++-debug-mode>on
       <catchsegv>on
       <cradle-checking>on
-      <source>/cradle/ext/boost//headers
+      <source>/cradle/ext/boost//headers_compile
+      <source>/cradle/ext/boost//unit_test_framework_compile
+      <library>/cradle/ext/boost//headers_link
+      <library>/cradle/ext/boost//unit_test_framework_link
     ;
 }
 else {
@@ -19,6 +22,10 @@ else {
       #<toolset>intel:<define>_GLIBCXX_DEBUG_PEDANTIC
       #<toolset>clang:<cflags>-fsanitize=address
       <cradle-checking>on
+      <source>/cradle/ext/boost//headers_compile
+      <source>/cradle/ext/boost//unit_test_framework_compile
+      <library>/cradle/ext/boost//headers_link
+      <library>/cradle/ext/boost//unit_test_framework_link
     ;
 }
 
@@ -30,9 +37,8 @@ local .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
 
 local .direct-subdirs ;
 for local i in [ path.glob "$(.here)" : * ] {
-  local ph = [ path.native "$(i)" ] ;
-  if [ SHELL "test -e \"$(ph)/jamfile\" && echo -n 'x'" ] = "x" {
-    .direct-subdirs += "$(i)" ;
+  if [ path.exists "$(i)/jamfile" ] {
+    .direct-subdirs += "$(i:B)" ;
   }
 }
 
