@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE library PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN"
+  "file:///C:/local_x86/boost/1.53.0/tools/boostbook/dtd/1.1/boostbook.dtd">
+<!--http://www.boost.org/tools/boostbook/dtd/1.1/boostbook.dtd-->
+<library name="TypeTraits" dirname="type_traits" xmlns:xi="http://www.w3.org/2001/XInclude" 
+         id="type_traits" last-revision="2013-04-04">
+  <libraryinfo>
+    <author>
+      <personname>
+        <firstname>Cryolite</firstname>
+      </personname>
+    </author>
+    <copyright>
+      <year>2013</year>
+      <holder>Cryolite</holder>
+    </copyright>
+    <legalnotice>
+      <para>
+        Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file <filename>LICENSE_1_0.txt</filename> or copy at
+        <ulink url="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</ulink>)
+      </para>
+    </legalnotice>
+    <librarypurpose>Supplement for &lt;type_traits&gt; and Boost.TypeTraits</librarypurpose>
+    <librarycategory>Templace Metaprogramming</librarycategory>
+  </libraryinfo>
+
+  <title>Cradle.TypeTraits</title>
+
+  <library-reference>
+    <header name="cradle/type_traits/is_decayed.hpp">
+      <namespace name="cradle">
+        <struct name="is_decayed">
+          <template>
+            <template-type-parameter name="T"/>
+          </template>
+          <purpose>
+            <simpara> 
+              A metafunction that checks whether a type is decayed.
+            </simpara>
+          </purpose>
+          <description>
+            <simpara>
+              Checks whether a type is decayed.
+            </simpara>
+            <formalpara>
+              <title>Model of</title>
+              <para>
+                Numeric Metafunction
+              </para>
+            </formalpara>
+            <formalpara>
+              <title>Invariants</title>
+              <para>
+                <itemizedlist mark="none">
+                  <listitem>
+                    <formalpara>
+                      <title>Fixed point of <code>std::decay</code> metafunction</title>
+                      <para>
+                        <blockquote>
+                          <simpara>
+                            <code>BOOST_MPL_ASSERT((boost::mpl::is_equal_to&lt;is_plain&lt;A&gt;::type, std::is_same&lt;typename std::decay&lt;A&gt;::type, A&gt;::type&gt;))</code>
+                          </simpara>
+                        </blockquote>
+                      </para>
+                    </formalpara>
+                  </listitem>
+                </itemizedlist>
+              </para>
+            </formalpara>
+            <formalpara>
+              <title>Expression semantics</title>
+              <para>
+                For any type <code>a</code>;
+                <itemizedlist mark="none">
+                  <listitem>
+                    <formalpara>
+                      <title><code>typedef typename is_plain&lt;a&gt;::type r;</code></title>
+                      <para>
+                        <itemizedlist mark="none">
+                          <listitem>
+                            <formalpara>
+                              <title>Return type</title>
+                              <para>
+                                Integral Constant.
+                              </para>
+                            </formalpara>
+                          </listitem>
+                          <listitem>
+                            <formalpara>
+                              <title>Semantics</title>
+                              <para>
+                                Equivalent to
+                                <blockquote>
+                                  <simpara>
+                                    <code>typedef boost::mpl::bool_&lt;std::is_same&lt;typename std::decay&lt;A&gt;::type, T&gt;::value&gt; r;</code>
+                                  </simpara>
+                                </blockquote>
+                              </para>
+                            </formalpara>
+                          </listitem>
+                        </itemizedlist>
+                      </para>
+                    </formalpara>
+                  </listitem>
+                  <listitem>
+                    <formalpara>
+                      <title><code>typedef is_plain&lt;a&gt; r;</code></title>
+                      <para>
+                        <itemizedlist mark="none">
+                          <listitem>
+                            <formalpara>
+                              <title>Return type</title>
+                              <para>
+                                Integral Constant.
+                              </para>
+                            </formalpara>
+                          </listitem>
+                          <listitem>
+                            <formalpara>
+                              <title>Semantics</title>
+                              <para>
+                                Equivalent to
+                                <blockquote>
+                                  <simpara>
+                                    <code>struct r : is_plain&lt;a&gt;::type {};</code>
+                                  </simpara>
+                                </blockquote>
+                              </para>
+                            </formalpara>
+                          </listitem>
+                        </itemizedlist>
+                      </para>
+                    </formalpara>
+                  </listitem>
+                  <listitem>
+                    <formalpara>
+                      <title><code>constexpr b = is_plain&lt;a&gt;::value;</code></title>
+                      <para>
+                        <itemizedlist mark="none">
+                          <listitem>
+                            <formalpara>
+                              <title>Semantics</title>
+                              <para>
+                                Equivalent to
+                                <blockquote>
+                                  <simpara>
+                                    <code>constexpr bool b = is_plain&lt;a&gt;::type::value;</code>
+                                    <footnote id="implicit-conversion">
+                                      <simpara>
+                                        This is intended to guarantee that an object of type <code>is_plain&lt;a&gt;</code> can be implicitly converted to a <code>bool</code>
+                                        constant expression.
+                                      </simpara>
+                                    </footnote>
+                                  </simpara>
+                                </blockquote>
+                              </para>
+                            </formalpara>
+                          </listitem>
+                        </itemizedlist>
+                      </para>
+                    </formalpara>
+                  </listitem>
+                  <listitem>
+                    <formalpara>
+                      <title><code>constexpr bool b = is_plain&lt;a&gt;();</code></title>
+                      <para>
+                        <itemizedlist mark="none">
+                          <listitem>
+                            <formalpara>
+                              <title>Semantics</title>
+                              <para>
+                                Equivalent to
+                                <blockquote>
+                                  <simpara>
+                                    <code>constexpr bool b = is_plain&lt;a&gt;::value;</code>
+                                    <footnoteref linkend="implicit-conversion"/>
+                                  </simpara>
+                                </blockquote>
+                              </para>
+                            </formalpara>
+                          </listitem>
+                        </itemizedlist>
+                      </para>
+                    </formalpara>
+                  </listitem>
+                </itemizedlist>
+              </para>
+            </formalpara>
+          </description>
+          <typedef name="type">
+            <type><replaceable>unspecified</replaceable></type>
+          </typedef>
+        </struct>
+      </namespace>
+    </header>
+  </library-reference>
+</library>

@@ -1,5 +1,7 @@
 project cradle/ext/glibc ;
 
+import testing ;
+
 obj backtrace.obj : backtrace.cpp ;
 explicit backtrace.obj ;
 

@@ -6,6 +6,7 @@ import boostbook : boostbook ;
 boostbook doc
   : cradle.xml
   : <dependency>exception/exception.xml
+    <dependency>type_traits/type_traits.xml
   ;
 
 install css : [ glob *.css ] : <location>html ;

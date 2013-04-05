@@ -34,5 +34,6 @@
     <title>The Boost C++ Libraries (BoostBook Subset)</title>
 
     <xi:include href="exception/exception.xml"/>
+    <xi:include href="type_traits/type_traits.xml"/>
   </part>
 </boostbook>
