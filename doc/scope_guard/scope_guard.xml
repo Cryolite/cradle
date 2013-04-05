@@ -1,0 +1,326 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE library PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN"
+  "file:///C:/local/boost/latest/tools/boostbook/dtd/1.1/boostbook.dtd">
+<!--http://www.boost.org/tools/boostbook/dtd/1.1/boostbook.dtd-->
+<library name="ScopeGuard" dirname="scope_guard" xmlns:xi="http://www.w3.org/2001/XInclude" 
+         id="scope_guard" last-revision="2013-04-03">
+  <libraryinfo>
+    <author>
+      <personname>
+        <firstname>Cryolite</firstname>
+      </personname>
+    </author>
+    <copyright>
+      <year>2013</year>
+      <holder>Cryolite</holder>
+    </copyright>
+    <legalnotice>
+      <para>
+        Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file <filename>LICENSE_1_0.txt</filename> or copy at
+        <ulink url="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</ulink>)
+      </para>
+    </legalnotice>
+    <librarypurpose>Scope guard</librarypurpose>
+    <librarycategory>Language Features Emulation</librarycategory>
+  </libraryinfo>
+
+  <title>Cradle.ScopeGuard</title>
+
+  <library-reference>
+    <header name="cradle/scope_guard/scope_guard.hpp">
+      <macro name="CRADLE_SCOPE_GUARD">
+        <purpose>
+          <simpara>
+            Provides a concise way to guarantee some statements are certainly executed upon exit from a scope.
+          </simpara>
+        </purpose>
+        <description>
+          <sect5>
+            <title>Requires</title>
+            <para>
+              Should be used only in the following form;
+              <blockquote>
+                <simpara><code><macroname>CRADLE_SCOPE_GUARD</macroname> </code><replaceable>compound-statement</replaceable><code> ;</code></simpara>
+              </blockquote>
+              Any other forms of use are ill-formed; no diagnostic required.
+            </para>
+          </sect5>
+          <sect5>
+            <title>Emulated grammatical extensions to ISO/IEC 14882:2011</title>
+            <para>
+              <itemizedlist>
+                <listitem>
+                  <formalpara>
+                    <title>[dcl.dcl]</title>
+                    <para>
+                      Insert a new syntactic category <replaceable>scope_guard-declaration</replaceable> as an alternative to the right-hand side of the production rule for <replaceable>block-declaration</replaceable>;
+                      <blockquote>
+                        <para>
+                          <replaceable>block-declaration:</replaceable>
+                          <itemizedlist mark="none">
+                            <listitem>
+                              <simpara>
+                                <replaceable>simple-declaration</replaceable>
+                              </simpara>
+                            </listitem>
+                            <listitem>
+                              <simpara>
+                                <replaceable>asm-definition</replaceable>
+                              </simpara>
+                            </listitem>
+                            <listitem>
+                              <simpara>
+                                <replaceable>namespace-alias-definition</replaceable>
+                              </simpara>
+                            </listitem>
+                            <listitem>
+                              <simpara>
+                                <replaceable>using-declaration</replaceable>
+                              </simpara>
+                            </listitem>
+                            <listitem>
+                              <simpara>
+                                <replaceable>static_assert-declaration</replaceable>
+                              </simpara>
+                            </listitem>
+                            <listitem>
+                              <simpara>
+                                <replaceable>alias-declaration</replaceable>
+                              </simpara>
+                            </listitem>
+                            <listitem>
+                              <simpara>
+                                <replaceable>opaque-enum-declaration</replaceable>
+                              </simpara>
+                            </listitem>
+                            <listitem>
+                              <simpara>
+                                <replaceable>scope_guard-declaration</replaceable>
+                              </simpara>
+                            </listitem>
+                          </itemizedlist>
+                        </para>
+                      </blockquote>
+                    </para>
+                  </formalpara>
+                </listitem>
+                <listitem>
+                  <para>
+                    Add a new production rule for <replaceable>scope_guard-declaration</replaceable>;
+                    <blockquote>
+                      <para>
+                        <replaceable>scope_guard-declaration:</replaceable>
+                        <itemizedlist mark="none">
+                          <listitem>
+                            <simpara>
+                              <code><macroname>CRADLE_SCOPE_GUARD</macroname> </code><replaceable>compound-statement</replaceable><code> ;</code>
+                            </simpara>
+                          </listitem>
+                        </itemizedlist>
+                      </para>
+                    </blockquote>
+                  </para>
+                </listitem>
+              </itemizedlist>
+            </para>
+          </sect5>
+          <sect5>
+            <title>Identifiers introduced into enclosing scope</title>
+            <para>
+              <itemizedlist>
+                <listitem>
+                  <simpara>
+                    <code>cradle_scope_guard_ ## __LINE__</code>
+                  </simpara>
+                </listitem>
+              </itemizedlist>
+            </para>
+          </sect5>
+          <sect5>
+            <title>Semantics</title>
+            <para>
+              <blockquote>
+                <simpara>
+                  <code><macroname>CRADLE_SCOPE_GUARD</macroname> </code><replaceable>compound-statement</replaceable><code> ;</code>
+                </simpara>
+              </blockquote>
+              is equivalent to
+              <blockquote>
+                <literallayout><code><replaceable>unspecified-scope-guard-type</replaceable> cradle_scope_guard_ ## __LINE__ ([&amp;]() noexcept </code><replaceable>compound-statement</replaceable><code> );</code></literallayout>
+              </blockquote>
+              where
+              <blockquote>
+                <literallayout><code>template&lt;typename F&gt;
+class <replaceable>unspecified-scope-guard-type</replaceable>
+{
+public:
+  explicit <replaceable>unspecified-scope-guard-type</replaceable>(F &amp;&amp;f) noexcept
+    : f_(std::move(f))
+  {}
+
+  ~<replaceable>unspecified-scope-guard-type</replaceable>() noexcept
+  {
+    f_();
+  }
+
+private:
+  F f_;
+};</code></literallayout>
+              </blockquote>
+            </para>
+          </sect5>
+        </description>
+      </macro>
+    </header>
+    <header name="cradle/scope_guard/exception_guard.hpp">
+      <macro name="CRADLE_EXCEPTION_GUARD">
+        <purpose>
+          <simpara>
+            Provides a concise way to guarantee some statements are certainly executed when execution of a scope exits via an exception.
+          </simpara>
+        </purpose>
+        <description>
+          <sect5>
+            <title>Requires</title>
+            <para>
+              Should be used only in the following form;
+              <blockquote>
+                <simpara><code><macroname>CRADLE_EXCEPTION_GUARD</macroname> </code><replaceable>compound-statement</replaceable><code> ;</code></simpara>
+              </blockquote>
+              Any other forms of use are ill-formed; no diagnostic required.
+            </para>
+          </sect5>
+          <sect5>
+            <title>Emulated grammatical extensions to ISO/IEC 14882:2011</title>
+            <para>
+              <itemizedlist>
+                <listitem>
+                  <formalpara>
+                    <title>[dcl.dcl]</title>
+                    <para>
+                      Insert a new syntactic category <replaceable>exception_guard-declaration</replaceable> as an alternative to the right-hand side of the production rule for <replaceable>block-declaration</replaceable>;
+                      <blockquote>
+                        <para>
+                          <replaceable>block-declaration:</replaceable>
+                          <itemizedlist mark="none">
+                            <listitem>
+                              <simpara>
+                                <replaceable>simple-declaration</replaceable>
+                              </simpara>
+                            </listitem>
+                            <listitem>
+                              <simpara>
+                                <replaceable>asm-definition</replaceable>
+                              </simpara>
+                            </listitem>
+                            <listitem>
+                              <simpara>
+                                <replaceable>namespace-alias-definition</replaceable>
+                              </simpara>
+                            </listitem>
+                            <listitem>
+                              <simpara>
+                                <replaceable>using-declaration</replaceable>
+                              </simpara>
+                            </listitem>
+                            <listitem>
+                              <simpara>
+                                <replaceable>static_assert-declaration</replaceable>
+                              </simpara>
+                            </listitem>
+                            <listitem>
+                              <simpara>
+                                <replaceable>alias-declaration</replaceable>
+                              </simpara>
+                            </listitem>
+                            <listitem>
+                              <simpara>
+                                <replaceable>opaque-enum-declaration</replaceable>
+                              </simpara>
+                            </listitem>
+                            <listitem>
+                              <simpara>
+                                <replaceable>exception_guard-declaration</replaceable>
+                              </simpara>
+                            </listitem>
+                          </itemizedlist>
+                        </para>
+                      </blockquote>
+                    </para>
+                  </formalpara>
+                </listitem>
+                <listitem>
+                  <para>
+                    Add a new production rule for <replaceable>exception_guard-declaration</replaceable>;
+                    <blockquote>
+                      <para>
+                        <replaceable>exception_guard-declaration:</replaceable>
+                        <itemizedlist mark="none">
+                          <listitem>
+                            <simpara>
+                              <code><macroname>CRADLE_EXCEPTION_GUARD</macroname> </code><replaceable>compound-statement</replaceable><code> ;</code>
+                            </simpara>
+                          </listitem>
+                        </itemizedlist>
+                      </para>
+                    </blockquote>
+                  </para>
+                </listitem>
+              </itemizedlist>
+            </para>
+          </sect5>
+          <sect5>
+            <title>Identifiers introduced into enclosing scope</title>
+            <para>
+              <itemizedlist>
+                <listitem>
+                  <simpara>
+                    <code>cradle_exception_guard_ ## __LINE__</code>
+                  </simpara>
+                </listitem>
+              </itemizedlist>
+            </para>
+          </sect5>
+          <sect5>
+            <title>Semantics</title>
+            <para>
+              <blockquote>
+                <simpara>
+                  <code><macroname>CRADLE_EXCEPTION_GUARD</macroname> </code><replaceable>compound-statement</replaceable><code> ;</code>
+                </simpara>
+              </blockquote>
+              is equivalent to
+              <blockquote>
+                <literallayout><code><replaceable>unspecified-exception-guard-type</replaceable> cradle_exception_guard_ ## __LINE__ ([&amp;]() noexcept </code><replaceable>compound-statement</replaceable><code> );</code></literallayout>
+              </blockquote>
+              where
+              <blockquote>
+                <literallayout><code>template&lt;typename F&gt;
+class <replaceable>unspecified-exception-guard-type</replaceable>
+{
+public:
+  explicit <replaceable>unspecified-exception-guard-type</replaceable>(F &amp;&amp;f) noexcept
+    : f_(std::move(f)),
+      n_(<functionname>cradle::exceptions::get_num_uncaught_exceptions</functionname>())
+  {}
+
+  ~<replaceable>unspecified-exception-guard-type</replaceable>() noexcept
+  {
+    if (<functionname>cradle::exceptions::get_num_uncaught_exceptions</functionname>() > n_) {
+      f_();
+    }
+  }
+
+private:
+  F f_;
+  std::size_t n_;
+};</code></literallayout>
+              </blockquote>
+            </para>
+          </sect5>
+        </description>
+      </macro>
+    </header>
+  </library-reference>
+</library>
