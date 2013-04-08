@@ -40,43 +40,52 @@
             <description>
               <para>
                 <termdef>
-                  A <firstterm>direct predecessor of an
-                  evaluation</firstterm> <replaceable>X</replaceable> is an
-                  evaluation <replaceable>Y</replaceable> that satisfies the
-                  following conditions; <replaceable>Y</replaceable> is
-                  sequenced before <replaceable>X</replaceable>, and there
-                  is no other evaluation <replaceable>Z</replaceable> such
-                  that
-                  <replaceable>Z</replaceable> is sequenced before
-                  <replaceable>X</replaceable> and
-                  <replaceable>Y</replaceable> is sequenced before
-                  <replaceable>Z</replaceable>.
+                  In this description, <replaceable>X</replaceable> and <replaceable>Y</replaceable> denote evaluations<footnote>
+                    <simpara>
+                      Defined in [intro.execution]/12, <citetitle pubwork="book">ISO/IEC 14882:2011</citetitle>.
+                    </simpara>
+                  </footnote>. <replaceable>Y</replaceable> is said to be a <firstterm>direct predecessor</firstterm> of <replaceable>X</replaceable> if
+                  <replaceable>Y</replaceable> is sequenced before<footnote>
+                    <simpara>
+                      Defined in [intro.execution]/13, <citetitle pubwork="book">ISO/IEC 14882:2011</citetitle>.
+                    </simpara>
+                  </footnote> <replaceable>X</replaceable> and there is no other evaluation <replaceable>Z</replaceable> such that <replaceable>Z</replaceable> is sequenced before
+                  <replaceable>X</replaceable> and <replaceable>Y</replaceable> is sequenced before <replaceable>Z</replaceable>.
                 </termdef>
               </para>
               <para>
                 <termdef>
-                  The <firstterm>number of uncaught exceptions</firstterm>
-                  is a natural number defined for every evaluation in a
-                  well-formed program. The number of uncaught exceptions is
-                  defined as <inlineequation>0</inlineequation> for
-                  evaluations that do not have any direct predecessor. The
-                  number of uncaught exceptions is defined as
-                  <inlineequation>n + 1</inlineequation> for an evaluation
-                  if it is one of a throw expression and the number of
-                  uncaught exceptions for one of the direct predecessors of
-                  the evaluation is <inlineequation>n</inlineequation>. The
-                  number of uncaught exceptions is defined as
-                  <inlineequation>n - 1</inlineequation> for an evaluation
-                  if it is one of the initialization for the formal
-                  parameter of a catch clause and the number of uncaught
-                  exceptions for one of the direct predecessor of the
-                  evaluation is <inlineequation>n</inlineequation>.
+                  The <firstterm>number of uncaught exceptions</firstterm> is a natural number defined for every evaluation in a well-formed program<footnote>
+                    <simpara>
+                      Defined in [defns.well.formed], <citetitle pubwork="book">ISO/IEC 14882:2011</citetitle>.
+                    </simpara>
+                  </footnote>. The number of uncaught exceptions of an evaluation is defined as follows;
+                  <itemizedlist>
+                    <listitem>
+                      <inlineequation>0</inlineequation> if the evaluation does not have any direct predecessor, otherwise
+                    </listitem>
+                    <listitem>
+                      <inlineequation>n + 1</inlineequation> if one of the direct predecessors of the evaluation is an evaluation of a
+                      <replaceable>throw-expression</replaceable><footnote>
+                        <simpara>
+                          Defined in [except.throw], <citetitle pubwork="book">ISO/IEC 14882:2011</citetitle>.
+                        </simpara>
+                      </footnote> and the number of uncaught exceptions for the direct predecessor is <inlineequation>n</inlineequation>, otherwise
+                    </listitem>
+                    <listitem>
+                      <inlineequation>n - 1</inlineequation> if the evaluation is of an expression in the <replaceable>compound-statement</replaceable> of a
+                      <replaceable>handler</replaceable><footnote>
+                        <simpara>
+                          Defined in [except]/1 and [except.handle]/1, <citetitle pubwork="book">ISO/IEC 14882:2011</citetitle>.
+                        </simpara>
+                      </footnote> and one of the direct predecessors of the evauation is not an evaluation of an expression in the same
+                      <replaceable>compound-statement</replaceable> and the number of uncaught exceptions for the direct predecessor is <inlineequation>n</inlineequation>.
+                    </listitem>
+                  </itemizedlist>
                 </termdef>
                 <footnote>
                   <simpara>
-                    It cannot happen that the numbers of uncaught exceptions
-                    are different among the direct ancestors of an
-                    evaluation in any well-defined program.
+                    It cannot happen that the numbers of uncaught exceptions are different among the direct predecessors of an evaluation in any well-defined program.
                   </simpara>
                 </footnote>
               </para>
@@ -89,6 +98,16 @@
                 Nothing.
               </simpara>
             </throws>
+            <complexity>
+              <simpara>
+                Constant.
+              </simpara>
+            </complexity>
+            <notes>
+              <simpara>
+                Guarantees strong thread-safety.
+              </simpara>
+            </notes>
           </function>
         </namespace>
       </namespace>

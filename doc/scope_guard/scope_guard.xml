@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE library PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN"
-  "file:///C:/local/boost/latest/tools/boostbook/dtd/1.1/boostbook.dtd">
-<!--http://www.boost.org/tools/boostbook/dtd/1.1/boostbook.dtd-->
+  "http://www.boost.org/tools/boostbook/dtd/1.1/boostbook.dtd">
 <library name="ScopeGuard" dirname="scope_guard" xmlns:xi="http://www.w3.org/2001/XInclude" 
          id="scope_guard" last-revision="2013-04-03">
   <libraryinfo>
@@ -36,122 +35,117 @@
           </simpara>
         </purpose>
         <description>
-          <sect5>
-            <title>Requires</title>
-            <para>
-              Should be used only in the following form;
-              <blockquote>
-                <simpara><code><macroname>CRADLE_SCOPE_GUARD</macroname> </code><replaceable>compound-statement</replaceable><code> ;</code></simpara>
-              </blockquote>
-              Any other forms of use are ill-formed; no diagnostic required.
-            </para>
-          </sect5>
-          <sect5>
-            <title>Emulated grammatical extensions to ISO/IEC 14882:2011</title>
-            <para>
-              <itemizedlist>
-                <listitem>
-                  <formalpara>
-                    <title>[dcl.dcl]</title>
+          <variablelist>
+            <varlistentry>
+              <term>Requires</term>
+              <listitem>
+                <para>
+                  Should be used only in the following form;
+                  <programlisting><macroname>CRADLE_SCOPE_GUARD</macroname> <replaceable>compound-statement</replaceable> ;</programlisting>
+                  Any other forms of use are ill-formed; no diagnostic required.
+                </para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>Emulated grammatical extensions to <citetitle pubwork="book">ISO/IEC 14882:2011</citetitle></term>
+              <listitem>
+                <itemizedlist>
+                  <listitem>
+                    <formalpara>
+                      <title>[dcl.dcl]</title>
+                      <para>
+                        Insert a new syntactic category <replaceable>scope_guard-declaration</replaceable> as an alternative to the right-hand side of the production rule for <replaceable>block-declaration</replaceable>;
+                        <blockquote>
+                          <para>
+                            <replaceable>block-declaration:</replaceable>
+                            <itemizedlist mark="none">
+                              <listitem>
+                                <simpara>
+                                  <replaceable>simple-declaration</replaceable>
+                                </simpara>
+                              </listitem>
+                              <listitem>
+                                <simpara>
+                                  <replaceable>asm-definition</replaceable>
+                                </simpara>
+                              </listitem>
+                              <listitem>
+                                <simpara>
+                                  <replaceable>namespace-alias-definition</replaceable>
+                                </simpara>
+                              </listitem>
+                              <listitem>
+                                <simpara>
+                                  <replaceable>using-declaration</replaceable>
+                                </simpara>
+                              </listitem>
+                              <listitem>
+                                <simpara>
+                                  <replaceable>static_assert-declaration</replaceable>
+                                </simpara>
+                              </listitem>
+                              <listitem>
+                                <simpara>
+                                  <replaceable>alias-declaration</replaceable>
+                                </simpara>
+                              </listitem>
+                              <listitem>
+                                <simpara>
+                                  <replaceable>opaque-enum-declaration</replaceable>
+                                </simpara>
+                              </listitem>
+                              <listitem>
+                                <simpara>
+                                  <replaceable>scope_guard-declaration</replaceable>
+                                </simpara>
+                              </listitem>
+                            </itemizedlist>
+                          </para>
+                        </blockquote>
+                      </para>
+                    </formalpara>
+                  </listitem>
+                  <listitem>
                     <para>
-                      Insert a new syntactic category <replaceable>scope_guard-declaration</replaceable> as an alternative to the right-hand side of the production rule for <replaceable>block-declaration</replaceable>;
+                      Add a new production rule for <replaceable>scope_guard-declaration</replaceable>;
                       <blockquote>
                         <para>
-                          <replaceable>block-declaration:</replaceable>
+                          <replaceable>scope_guard-declaration:</replaceable>
                           <itemizedlist mark="none">
                             <listitem>
                               <simpara>
-                                <replaceable>simple-declaration</replaceable>
-                              </simpara>
-                            </listitem>
-                            <listitem>
-                              <simpara>
-                                <replaceable>asm-definition</replaceable>
-                              </simpara>
-                            </listitem>
-                            <listitem>
-                              <simpara>
-                                <replaceable>namespace-alias-definition</replaceable>
-                              </simpara>
-                            </listitem>
-                            <listitem>
-                              <simpara>
-                                <replaceable>using-declaration</replaceable>
-                              </simpara>
-                            </listitem>
-                            <listitem>
-                              <simpara>
-                                <replaceable>static_assert-declaration</replaceable>
-                              </simpara>
-                            </listitem>
-                            <listitem>
-                              <simpara>
-                                <replaceable>alias-declaration</replaceable>
-                              </simpara>
-                            </listitem>
-                            <listitem>
-                              <simpara>
-                                <replaceable>opaque-enum-declaration</replaceable>
-                              </simpara>
-                            </listitem>
-                            <listitem>
-                              <simpara>
-                                <replaceable>scope_guard-declaration</replaceable>
+                                <code><macroname>CRADLE_SCOPE_GUARD</macroname> </code><replaceable>compound-statement</replaceable><code> ;</code>
                               </simpara>
                             </listitem>
                           </itemizedlist>
                         </para>
                       </blockquote>
                     </para>
-                  </formalpara>
-                </listitem>
-                <listitem>
-                  <para>
-                    Add a new production rule for <replaceable>scope_guard-declaration</replaceable>;
-                    <blockquote>
-                      <para>
-                        <replaceable>scope_guard-declaration:</replaceable>
-                        <itemizedlist mark="none">
-                          <listitem>
-                            <simpara>
-                              <code><macroname>CRADLE_SCOPE_GUARD</macroname> </code><replaceable>compound-statement</replaceable><code> ;</code>
-                            </simpara>
-                          </listitem>
-                        </itemizedlist>
-                      </para>
-                    </blockquote>
-                  </para>
-                </listitem>
-              </itemizedlist>
-            </para>
-          </sect5>
-          <sect5>
-            <title>Identifiers introduced into enclosing scope</title>
+                  </listitem>
+                </itemizedlist>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>Identifiers introduced into enclosing scope</term>
+              <listitem>
+                <itemizedlist>
+                  <listitem>
+                    <simpara>
+                      <code>cradle_scope_guard_ ## __LINE__</code>
+                    </simpara>
+                  </listitem>
+                </itemizedlist>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>Semantics</term>
+              <listitem>
             <para>
-              <itemizedlist>
-                <listitem>
-                  <simpara>
-                    <code>cradle_scope_guard_ ## __LINE__</code>
-                  </simpara>
-                </listitem>
-              </itemizedlist>
-            </para>
-          </sect5>
-          <sect5>
-            <title>Semantics</title>
-            <para>
-              <blockquote>
-                <simpara>
-                  <code><macroname>CRADLE_SCOPE_GUARD</macroname> </code><replaceable>compound-statement</replaceable><code> ;</code>
-                </simpara>
-              </blockquote>
+              <programlisting><macroname>CRADLE_SCOPE_GUARD</macroname> <replaceable>compound-statement</replaceable> ;</programlisting>
               is equivalent to
-              <blockquote>
-                <literallayout><code><replaceable>unspecified-scope-guard-type</replaceable> cradle_scope_guard_ ## __LINE__ ([&amp;]() noexcept </code><replaceable>compound-statement</replaceable><code> );</code></literallayout>
-              </blockquote>
+              <programlisting><replaceable>unspecified-scope-guard-type</replaceable>&lt;<replaceable>unspecified</replaceable>&gt; cradle_scope_guard_ ## __LINE__ ([&amp;]() noexcept <replaceable>compound-statement</replaceable> );</programlisting>
               where
-              <blockquote>
-                <literallayout><code>template&lt;typename F&gt;
+<programlisting>template&lt;typename F&gt;
 class <replaceable>unspecified-scope-guard-type</replaceable>
 {
 public:
@@ -166,10 +160,11 @@ public:
 
 private:
   F f_;
-};</code></literallayout>
-              </blockquote>
+};</programlisting>
             </para>
-          </sect5>
+              </listitem>
+            </varlistentry>
+          </variablelist>
         </description>
       </macro>
     </header>
@@ -181,75 +176,77 @@ private:
           </simpara>
         </purpose>
         <description>
-          <sect5>
-            <title>Requires</title>
-            <para>
-              Should be used only in the following form;
-              <blockquote>
-                <simpara><code><macroname>CRADLE_EXCEPTION_GUARD</macroname> </code><replaceable>compound-statement</replaceable><code> ;</code></simpara>
-              </blockquote>
-              Any other forms of use are ill-formed; no diagnostic required.
-            </para>
-          </sect5>
-          <sect5>
-            <title>Emulated grammatical extensions to ISO/IEC 14882:2011</title>
-            <para>
-              <itemizedlist>
-                <listitem>
-                  <formalpara>
-                    <title>[dcl.dcl]</title>
-                    <para>
-                      Insert a new syntactic category <replaceable>exception_guard-declaration</replaceable> as an alternative to the right-hand side of the production rule for <replaceable>block-declaration</replaceable>;
-                      <blockquote>
-                        <para>
-                          <replaceable>block-declaration:</replaceable>
-                          <itemizedlist mark="none">
-                            <listitem>
-                              <simpara>
-                                <replaceable>simple-declaration</replaceable>
-                              </simpara>
-                            </listitem>
-                            <listitem>
-                              <simpara>
-                                <replaceable>asm-definition</replaceable>
-                              </simpara>
-                            </listitem>
-                            <listitem>
-                              <simpara>
-                                <replaceable>namespace-alias-definition</replaceable>
-                              </simpara>
-                            </listitem>
-                            <listitem>
-                              <simpara>
-                                <replaceable>using-declaration</replaceable>
-                              </simpara>
-                            </listitem>
-                            <listitem>
-                              <simpara>
-                                <replaceable>static_assert-declaration</replaceable>
-                              </simpara>
-                            </listitem>
-                            <listitem>
-                              <simpara>
-                                <replaceable>alias-declaration</replaceable>
-                              </simpara>
-                            </listitem>
-                            <listitem>
-                              <simpara>
-                                <replaceable>opaque-enum-declaration</replaceable>
-                              </simpara>
-                            </listitem>
-                            <listitem>
-                              <simpara>
-                                <replaceable>exception_guard-declaration</replaceable>
-                              </simpara>
-                            </listitem>
-                          </itemizedlist>
-                        </para>
-                      </blockquote>
-                    </para>
-                  </formalpara>
-                </listitem>
+          <variablelist>
+            <varlistentry>
+              <term>Requires</term>
+              <listitem>
+                <para>
+                  Should be used only in the following form;
+                  <programlisting><macroname>CRADLE_EXCEPTION_GUARD</macroname> <replaceable>compound-statement</replaceable> ;</programlisting>
+                  Any other forms of use are ill-formed; no diagnostic required.
+                </para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>Emulated grammatical extensions to <citetitle pubwork="book">ISO/IEC 14882:2011</citetitle></term>
+              <listitem>
+                <itemizedlist>
+                  <listitem>
+                    <formalpara>
+                      <title>[dcl.dcl]</title>
+                      <para>
+                        Insert a new syntactic category <replaceable>exception_guard-declaration</replaceable> as an alternative to the right-hand side of the production rule for
+                        <replaceable>block-declaration</replaceable>;
+                        <blockquote>
+                          <para>
+                            <replaceable>block-declaration:</replaceable>
+                            <itemizedlist mark="none">
+                              <listitem>
+                                <simpara>
+                                  <replaceable>simple-declaration</replaceable>
+                                </simpara>
+                              </listitem>
+                              <listitem>
+                                <simpara>
+                                  <replaceable>asm-definition</replaceable>
+                                </simpara>
+                              </listitem>
+                              <listitem>
+                                <simpara>
+                                  <replaceable>namespace-alias-definition</replaceable>
+                                </simpara>
+                              </listitem>
+                              <listitem>
+                                <simpara>
+                                  <replaceable>using-declaration</replaceable>
+                                </simpara>
+                              </listitem>
+                              <listitem>
+                                <simpara>
+                                  <replaceable>static_assert-declaration</replaceable>
+                                </simpara>
+                              </listitem>
+                              <listitem>
+                                <simpara>
+                                  <replaceable>alias-declaration</replaceable>
+                                </simpara>
+                              </listitem>
+                              <listitem>
+                                <simpara>
+                                  <replaceable>opaque-enum-declaration</replaceable>
+                                </simpara>
+                              </listitem>
+                              <listitem>
+                                <simpara>
+                                  <replaceable>exception_guard-declaration</replaceable>
+                                </simpara>
+                              </listitem>
+                            </itemizedlist>
+                          </para>
+                        </blockquote>
+                      </para>
+                    </formalpara>
+                  </listitem>
                 <listitem>
                   <para>
                     Add a new production rule for <replaceable>exception_guard-declaration</replaceable>;
@@ -268,35 +265,29 @@ private:
                   </para>
                 </listitem>
               </itemizedlist>
-            </para>
-          </sect5>
-          <sect5>
-            <title>Identifiers introduced into enclosing scope</title>
-            <para>
-              <itemizedlist>
-                <listitem>
-                  <simpara>
-                    <code>cradle_exception_guard_ ## __LINE__</code>
-                  </simpara>
-                </listitem>
-              </itemizedlist>
-            </para>
-          </sect5>
-          <sect5>
-            <title>Semantics</title>
-            <para>
-              <blockquote>
-                <simpara>
-                  <code><macroname>CRADLE_EXCEPTION_GUARD</macroname> </code><replaceable>compound-statement</replaceable><code> ;</code>
-                </simpara>
-              </blockquote>
-              is equivalent to
-              <blockquote>
-                <literallayout><code><replaceable>unspecified-exception-guard-type</replaceable> cradle_exception_guard_ ## __LINE__ ([&amp;]() noexcept </code><replaceable>compound-statement</replaceable><code> );</code></literallayout>
-              </blockquote>
-              where
-              <blockquote>
-                <literallayout><code>template&lt;typename F&gt;
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>Identifiers introduced into enclosing scope</term>
+              <listitem>
+                <itemizedlist>
+                  <listitem>
+                    <simpara>
+                      <code>cradle_exception_guard_ ## __LINE__</code>
+                    </simpara>
+                  </listitem>
+                </itemizedlist>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>Semantics</term>
+              <listitem>
+                <para>
+                  <programlisting><macroname>CRADLE_EXCEPTION_GUARD</macroname> <replaceable>compound-statement</replaceable> ;</programlisting>
+                  is equivalent to
+                  <programlisting><replaceable>unspecified-exception-guard-type</replaceable>&lt;<replaceable>unspecified</replaceable>&gt; cradle_exception_guard_ ## __LINE__ ([&amp;]() noexcept <replaceable>compound-statement</replaceable> );</programlisting>
+                  where
+<programlisting>template&lt;typename F&gt;
 class <replaceable>unspecified-exception-guard-type</replaceable>
 {
 public:
@@ -315,10 +306,11 @@ public:
 private:
   F f_;
   std::size_t n_;
-};</code></literallayout>
-              </blockquote>
-            </para>
-          </sect5>
+};</programlisting>
+                </para>
+              </listitem>
+            </varlistentry>
+          </variablelist>
         </description>
       </macro>
     </header>
