@@ -1,0 +1,134 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<title>Struct template string</title>
+<link rel="stylesheet" href="../../boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../mpl.html#header.cradle.mpl.string_hpp" title="Header &lt;cradle/mpl/string.hpp&gt;">
+<link rel="prev" href="../../mpl.html" title="Chapter&#160;2.&#160;Cradle.MPL">
+<link rel="next" href="../../CRADLE_MPL_STRING.html" title="Macro CRADLE_MPL_STRING">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="spirit-nav">
+<a accesskey="p" href="../../mpl.html"><img src="../../images/prev.png" alt="Prev"></a><a accesskey="u" href="../../mpl.html#header.cradle.mpl.string_hpp"><img src="../../images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../images/home.png" alt="Home"></a><a accesskey="n" href="../../CRADLE_MPL_STRING.html"><img src="../../images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="cradle.mpl.string"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct template string</span></h2>
+<p>cradle::mpl::string &#8212; A wrapper of a compile-time string.</p>
+</div>
+<h2 xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv-title">Synopsis</h2>
+<div xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../mpl.html#header.cradle.mpl.string_hpp" title="Header &lt;cradle/mpl/string.hpp&gt;">cradle/mpl/string.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="identifier">T</span><span class="special">...</span> Chars<span class="special">&gt;</span> 
+<span class="keyword">struct</span> <a class="link" href="string.html" title="Struct template string">string</a> <span class="special">{</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="idp4774864"></a><h2>Description</h2>
+<p>
+                In this description, <code class="computeroutput">X</code> denotes a type, <code class="computeroutput">ci</code> denotes an rvalue of type <code class="computeroutput">X</code>,
+                and <code class="computeroutput">s</code> denotes an rvalue of type <code class="computeroutput">string&lt;X, c1, c2, ..., cN;&gt;</code>.
+              </p>
+<div class="variablelist"><dl>
+<dt><span class="term">Requires</span></dt>
+<dd>
+<p class="simpara">
+                      <code class="varname">T</code> should be either <code class="computeroutput">char</code>, <code class="computeroutput">wchar_t</code>, <code class="computeroutput">char16_t</code> or <code class="computeroutput">char32_t</code>.
+                    </p>
+<p class="simpara">
+                      <code class="computeroutput">sizeof...(Chars) + 1</code> should be less than the implementation quantity of template arguments in a template declaration<sup>[<a name="idp4784288" href="#ftn.idp4784288" class="footnote">7</a>]</sup>.
+                    </p>
+</dd>
+<dt><span class="term">Valid syntaxes</span></dt>
+<dd><div class="itemizedlist"><ul class="itemizedlist" type="disc">
+<li class="listitem">
+<pre class="programlisting"><span class="identifier">string</span><span class="special">&lt;</span><span class="identifier">X</span><span class="special">,</span> <span class="identifier">c1</span><span class="special">,</span> <span class="identifier">c2</span><span class="special">,</span> <span class="special">...</span><span class="special">,</span> <span class="identifier">cN</span><span class="special">&gt;</span><span class="special">::</span><span class="identifier">value_type</span></pre>
+<div class="variablelist"><dl>
+<dt><span class="term">Category</span></dt>
+<dd>
+                                Type.
+                              </dd>
+<dt><span class="term">Returns</span></dt>
+<dd>
+                                <code class="computeroutput">std::array&lt;X, N&gt;</code>
+                              </dd>
+</dl></div>
+</li>
+<li class="listitem">
+<pre class="programlisting"><span class="identifier">string</span><span class="special">&lt;</span><span class="identifier">X</span><span class="special">,</span> <span class="identifier">c1</span><span class="special">,</span> <span class="identifier">c2</span><span class="special">,</span> <span class="special">...</span><span class="special">,</span> <span class="identifier">cN</span><span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span></pre>
+<div class="variablelist"><dl>
+<dt><span class="term">Category</span></dt>
+<dd>
+                                Value.
+                              </dd>
+<dt><span class="term">Type</span></dt>
+<dd>
+                                <code class="computeroutput">string&lt;X, c1, c2, ..., cN&gt;::value_type</code>.
+                              </dd>
+<dt><span class="term">Returns</span></dt>
+<dd>
+                                A constant expression of type <code class="computeroutput">value_type</code> whose i-th element is equal to <code class="computeroutput">ci</code>.
+                              </dd>
+</dl></div>
+</li>
+<li class="listitem">
+<pre class="programlisting"><span class="identifier">string</span><span class="special">&lt;</span><span class="identifier">X</span><span class="special">,</span> <span class="identifier">c1</span><span class="special">,</span> <span class="identifier">c2</span><span class="special">,</span> <span class="special">...</span><span class="special">,</span> <span class="identifier">cN</span><span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span></pre>
+<div class="variablelist"><dl>
+<dt><span class="term">Category</span></dt>
+<dd>
+                                Type.
+                              </dd>
+<dt><span class="term">Returns</span></dt>
+<dd>
+                                <code class="computeroutput">string&lt;X, c1, c2, ..., cN&gt;</code>.
+                              </dd>
+</dl></div>
+</li>
+<li class="listitem">
+<pre class="programlisting"><span class="keyword">static_cast</span><span class="special">&lt;</span><span class="identifier">string</span><span class="special">&lt;</span><span class="identifier">X</span><span class="special">,</span> <span class="identifier">c1</span><span class="special">,</span> <span class="identifier">c2</span><span class="special">,</span> <span class="special">...</span><span class="special">,</span> <span class="identifier">cN</span><span class="special">&gt;</span><span class="special">::</span><span class="identifier">value_type</span><span class="special">&gt;</span><span class="special">(</span><span class="identifier">s</span><span class="special">)</span></pre>
+<div class="variablelist"><dl>
+<dt><span class="term">Category</span></dt>
+<dd>
+                                Value.
+                              </dd>
+<dt><span class="term">Type</span></dt>
+<dd>
+                                Convertible to <code class="computeroutput">value_type</code>.
+                              </dd>
+<dt><span class="term">Returns</span></dt>
+<dd>
+                                <code class="computeroutput">value</code>.
+                              </dd>
+<dt><span class="term">Throws</span></dt>
+<dd>
+                                Nothing.
+                              </dd>
+</dl></div>
+</li>
+</ul></div></dd>
+</dl></div>
+</div>
+<div class="footnotes">
+<br><hr width="100" align="left">
+<div class="footnote"><p><sup>[<a id="ftn.idp4784288" href="#idp4784288" class="simpara">7</a>] </sup>
+                          The quantity recommended in [implimits], <em class="citetitle">ISO/IEC 14882:2011</em> is 1024.
+                        </p></div>
+</div>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright &#169; 2013 Cryolite<p>
+        Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file <code class="filename">LICENSE_1_0.txt</code> or copy at
+        <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../../mpl.html"><img src="../../images/prev.png" alt="Prev"></a><a accesskey="u" href="../../mpl.html#header.cradle.mpl.string_hpp"><img src="../../images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../images/home.png" alt="Home"></a><a accesskey="n" href="../../CRADLE_MPL_STRING.html"><img src="../../images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

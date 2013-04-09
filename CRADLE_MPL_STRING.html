@@ -1,0 +1,76 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<title>Macro CRADLE_MPL_STRING</title>
+<link rel="stylesheet" href="boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="mpl.html#header.cradle.mpl.string_hpp" title="Header &lt;cradle/mpl/string.hpp&gt;">
+<link rel="prev" href="cradle/mpl/string.html" title="Struct template string">
+<link rel="next" href="scope_guard.html" title="Chapter&#160;3.&#160;Cradle.ScopeGuard">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="spirit-nav">
+<a accesskey="p" href="cradle/mpl/string.html"><img src="images/prev.png" alt="Prev"></a><a accesskey="u" href="mpl.html#header.cradle.mpl.string_hpp"><img src="images/up.png" alt="Up"></a><a accesskey="h" href="index.html"><img src="images/home.png" alt="Home"></a><a accesskey="n" href="scope_guard.html"><img src="images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="CRADLE_MPL_STRING"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Macro CRADLE_MPL_STRING</span></h2>
+<p>CRADLE_MPL_STRING &#8212; Creates <code class="computeroutput"><span class="structname">cradle::mpl::string</span></code> from a <em class="replaceable"><code>string-literal</code></em>.</p>
+</div>
+<h2 xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv-title">Synopsis</h2>
+<div xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="mpl.html#header.cradle.mpl.string_hpp" title="Header &lt;cradle/mpl/string.hpp&gt;">cradle/mpl/string.hpp</a>&gt;
+
+</span>CRADLE_MPL_STRING</pre></div>
+<div class="refsect1">
+<a name="idp4851584"></a><h2>Description</h2>
+<div class="variablelist"><dl>
+<dt><span class="term">Requires</span></dt>
+<dd>
+<p>
+                  Should be used only in the following form;
+                  </p>
+<pre class="programlisting"><span class="identifier">CRADLE_MPL_STRING</span> <span class="special">(</span> <em class="replaceable"><code><span class="identifier">string</span><span class="special">-</span><span class="identifier">literal</span></code></em> <span class="special">)</span> </pre>
+<p>
+                  Any other forms of use are ill-formed; no diagnostic required. This form can be used only as <em class="replaceable"><code>simple-type-specifier</code></em>.
+                </p>
+</dd>
+<dt><span class="term">Approximate expansion</span></dt>
+<dd>
+<p>
+                  </p>
+<pre class="programlisting"><span class="identifier">CRADLE_MPL_STRING</span> <span class="special">(</span> <em class="replaceable"><code><span class="identifier">string</span><span class="special">-</span><span class="identifier">literal</span></code></em> <span class="special">)</span></pre>
+<p>
+                  is equivalent to
+</p>
+<pre class="programlisting"><span class="special">::</span><a class="link" href="cradle/mpl/string.html" title="Struct template string">cradle::mpl::string</a><span class="special">&lt;</span>
+  <span class="special">::</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">remove_const</span><span class="special">&lt;</span>
+    <span class="special">::</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">remove_reference</span><span class="special">&lt;</span>
+      <span class="identifier">decltype</span><span class="special">(</span><em class="replaceable"><code><span class="identifier">string</span><span class="special">-</span><span class="identifier">literal</span></code></em><span class="special">[</span><span class="number">0</span><span class="special">]</span><span class="special">)</span><span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span><span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span><span class="special">,</span>
+  <em class="replaceable"><code><span class="identifier">string</span><span class="special">-</span><span class="identifier">literal</span></code></em><span class="special">[</span><span class="number">0</span><span class="special">]</span><span class="special">,</span>
+  <em class="replaceable"><code><span class="identifier">string</span><span class="special">-</span><span class="identifier">literal</span></code></em><span class="special">[</span><span class="number">1</span><span class="special">]</span><span class="special">,</span>
+  <span class="special">...</span><span class="special">.</span><span class="special">.</span>
+  <em class="replaceable"><code><span class="identifier">string</span><span class="special">-</span><span class="identifier">literal</span></code></em><span class="special">[</span><span class="identifier">N</span><span class="special">]</span><span class="special">&gt;</span></pre>
+<p>
+                  where <code class="computeroutput">N</code> is equal to <code class="computeroutput">sizeof(<em class="replaceable"><code>string-literal</code></em>) / sizeof(<em class="replaceable"><code>string-literal</code></em>)</code>.
+                </p>
+</dd>
+</dl></div>
+</div>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright &#169; 2013 Cryolite<p>
+        Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file <code class="filename">LICENSE_1_0.txt</code> or copy at
+        <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="cradle/mpl/string.html"><img src="images/prev.png" alt="Prev"></a><a accesskey="u" href="mpl.html#header.cradle.mpl.string_hpp"><img src="images/up.png" alt="Up"></a><a accesskey="h" href="index.html"><img src="images/home.png" alt="Home"></a><a accesskey="n" href="scope_guard.html"><img src="images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

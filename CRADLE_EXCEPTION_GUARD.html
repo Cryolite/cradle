@@ -1,0 +1,158 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<title>Macro CRADLE_EXCEPTION_GUARD</title>
+<link rel="stylesheet" href="boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="scope_guard.html#header.cradle.scope_guard.exception_guard_hpp" title="Header &lt;cradle/scope_guard/exception_guard.hpp&gt;">
+<link rel="prev" href="CRADLE_SCOPE_GUARD.html" title="Macro CRADLE_SCOPE_GUARD">
+<link rel="next" href="type_traits.html" title="Chapter&#160;4.&#160;Cradle.TypeTraits">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="spirit-nav">
+<a accesskey="p" href="CRADLE_SCOPE_GUARD.html"><img src="images/prev.png" alt="Prev"></a><a accesskey="u" href="scope_guard.html#header.cradle.scope_guard.exception_guard_hpp"><img src="images/up.png" alt="Up"></a><a accesskey="h" href="index.html"><img src="images/home.png" alt="Home"></a><a accesskey="n" href="type_traits.html"><img src="images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="CRADLE_EXCEPTION_GUARD"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Macro CRADLE_EXCEPTION_GUARD</span></h2>
+<p>CRADLE_EXCEPTION_GUARD &#8212; 
+            Provides a concise way to guarantee some statements are certainly executed when execution of a scope exits via an exception.
+          </p>
+</div>
+<h2 xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv-title">Synopsis</h2>
+<div xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="scope_guard.html#header.cradle.scope_guard.exception_guard_hpp" title="Header &lt;cradle/scope_guard/exception_guard.hpp&gt;">cradle/scope_guard/exception_guard.hpp</a>&gt;
+
+</span>CRADLE_EXCEPTION_GUARD</pre></div>
+<div class="refsect1">
+<a name="idp4999008"></a><h2>Description</h2>
+<div class="variablelist"><dl>
+<dt><span class="term">Requires</span></dt>
+<dd>
+<p>
+                  Should be used only in the following form;
+                  </p>
+<pre class="programlisting"><a class="link" href="CRADLE_EXCEPTION_GUARD.html" title="Macro CRADLE_EXCEPTION_GUARD">CRADLE_EXCEPTION_GUARD</a> <em class="replaceable"><code><span class="identifier">compound</span><span class="special">-</span><span class="identifier">statement</span></code></em> <span class="special">;</span></pre>
+<p>
+                  Any other forms of use are ill-formed; no diagnostic required.
+                </p>
+</dd>
+<dt><span class="term">Emulated grammatical extensions to <em class="citetitle">ISO/IEC 14882:2011</em></span></dt>
+<dd><div class="itemizedlist"><ul class="itemizedlist" type="disc">
+<li class="listitem">
+<p><b>[dcl.dcl].&#160;</b>
+                        Insert a new syntactic category <em class="replaceable"><code>exception_guard-declaration</code></em> as an alternative to the right-hand side of the production rule for
+                        <em class="replaceable"><code>block-declaration</code></em>;
+                        </p>
+<div class="blockquote"><blockquote class="blockquote">
+<p>
+                            <em class="replaceable"><code>block-declaration:</code></em>
+                            </p>
+<div class="itemizedlist"><ul class="itemizedlist" type="none">
+<li class="listitem" style="list-style-type: none">
+                                  <em class="replaceable"><code>simple-declaration</code></em>
+                                </li>
+<li class="listitem" style="list-style-type: none">
+                                  <em class="replaceable"><code>asm-definition</code></em>
+                                </li>
+<li class="listitem" style="list-style-type: none">
+                                  <em class="replaceable"><code>namespace-alias-definition</code></em>
+                                </li>
+<li class="listitem" style="list-style-type: none">
+                                  <em class="replaceable"><code>using-declaration</code></em>
+                                </li>
+<li class="listitem" style="list-style-type: none">
+                                  <em class="replaceable"><code>static_assert-declaration</code></em>
+                                </li>
+<li class="listitem" style="list-style-type: none">
+                                  <em class="replaceable"><code>alias-declaration</code></em>
+                                </li>
+<li class="listitem" style="list-style-type: none">
+                                  <em class="replaceable"><code>opaque-enum-declaration</code></em>
+                                </li>
+<li class="listitem" style="list-style-type: none">
+                                  <em class="replaceable"><code>exception_guard-declaration</code></em>
+                                </li>
+</ul></div>
+<p>
+                          </p>
+</blockquote></div>
+<p>
+                      </p>
+</li>
+<li class="listitem">
+<p>
+                    Add a new production rule for <em class="replaceable"><code>exception_guard-declaration</code></em>;
+                    </p>
+<div class="blockquote"><blockquote class="blockquote">
+<p>
+                        <em class="replaceable"><code>exception_guard-declaration:</code></em>
+                        </p>
+<div class="itemizedlist"><ul class="itemizedlist" type="none"><li class="listitem" style="list-style-type: none">
+                              <code class="computeroutput"><a class="link" href="CRADLE_EXCEPTION_GUARD.html" title="Macro CRADLE_EXCEPTION_GUARD">CRADLE_EXCEPTION_GUARD</a> </code><em class="replaceable"><code>compound-statement</code></em><code class="computeroutput"> ;</code>
+                            </li></ul></div>
+<p>
+                      </p>
+</blockquote></div>
+<p>
+                  </p>
+</li>
+</ul></div></dd>
+<dt><span class="term">Identifiers introduced into enclosing scope</span></dt>
+<dd><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+                      <code class="computeroutput">cradle_exception_guard_ ## __LINE__</code>
+                    </li></ul></div></dd>
+<dt><span class="term">Semantics</span></dt>
+<dd>
+<p>
+                  </p>
+<pre class="programlisting"><a class="link" href="CRADLE_EXCEPTION_GUARD.html" title="Macro CRADLE_EXCEPTION_GUARD">CRADLE_EXCEPTION_GUARD</a> <em class="replaceable"><code><span class="identifier">compound</span><span class="special">-</span><span class="identifier">statement</span></code></em> <span class="special">;</span></pre>
+<p>
+                  is equivalent to
+                  </p>
+<pre class="programlisting"><em class="replaceable"><code><span class="identifier">unspecified</span><span class="special">-</span><span class="identifier">exception</span><span class="special">-</span><span class="identifier">guard</span><span class="special">-</span><span class="identifier">type</span></code></em><span class="special">&lt;</span><em class="replaceable"><code><span class="identifier">unspecified</span></code></em><span class="special">&gt;</span> <span class="identifier">cradle_exception_guard_</span> <span class="special">##</span> <span class="identifier">__LINE__</span> <span class="special">(</span><span class="special">[</span><span class="special">&amp;</span><span class="special">]</span><span class="special">(</span><span class="special">)</span> <span class="identifier">noexcept</span> <em class="replaceable"><code><span class="identifier">compound</span><span class="special">-</span><span class="identifier">statement</span></code></em> <span class="special">)</span><span class="special">;</span></pre>
+<p>
+                  where
+</p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">F</span><span class="special">&gt;</span>
+<span class="keyword">class</span> <em class="replaceable"><code><span class="identifier">unspecified</span><span class="special">-</span><span class="identifier">exception</span><span class="special">-</span><span class="identifier">guard</span><span class="special">-</span><span class="identifier">type</span></code></em>
+<span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="keyword">explicit</span> <em class="replaceable"><code><span class="identifier">unspecified</span><span class="special">-</span><span class="identifier">exception</span><span class="special">-</span><span class="identifier">guard</span><span class="special">-</span><span class="identifier">type</span></code></em><span class="special">(</span><span class="identifier">F</span> <span class="special">&amp;&amp;</span><span class="identifier">f</span><span class="special">)</span> <span class="identifier">noexcept</span>
+    <span class="special">:</span> <span class="identifier">f_</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">f</span><span class="special">)</span><span class="special">)</span><span class="special">,</span>
+      <span class="identifier">n_</span><span class="special">(</span><a class="link" href="cradle/exceptions/get_num_uncaugh_idp8596944.html" title="Function get_num_uncaught_exceptions">cradle::exceptions::get_num_uncaught_exceptions</a><span class="special">(</span><span class="special">)</span><span class="special">)</span>
+  <span class="special">{</span><span class="special">}</span>
+
+  <span class="special">~</span><em class="replaceable"><code><span class="identifier">unspecified</span><span class="special">-</span><span class="identifier">exception</span><span class="special">-</span><span class="identifier">guard</span><span class="special">-</span><span class="identifier">type</span></code></em><span class="special">(</span><span class="special">)</span> <span class="identifier">noexcept</span>
+  <span class="special">{</span>
+    <span class="keyword">if</span> <span class="special">(</span><a class="link" href="cradle/exceptions/get_num_uncaugh_idp8596944.html" title="Function get_num_uncaught_exceptions">cradle::exceptions::get_num_uncaught_exceptions</a><span class="special">(</span><span class="special">)</span> <span class="special">&gt;</span> <span class="identifier">n_</span><span class="special">)</span> <span class="special">{</span>
+      <span class="identifier">f_</span><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+
+<span class="keyword">private</span><span class="special">:</span>
+  <span class="identifier">F</span> <span class="identifier">f_</span><span class="special">;</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">n_</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre>
+<p>
+                </p>
+</dd>
+</dl></div>
+</div>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright &#169; 2013 Cryolite<p>
+        Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file <code class="filename">LICENSE_1_0.txt</code> or copy at
+        <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="CRADLE_SCOPE_GUARD.html"><img src="images/prev.png" alt="Prev"></a><a accesskey="u" href="scope_guard.html#header.cradle.scope_guard.exception_guard_hpp"><img src="images/up.png" alt="Up"></a><a accesskey="h" href="index.html"><img src="images/home.png" alt="Home"></a><a accesskey="n" href="type_traits.html"><img src="images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

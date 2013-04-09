@@ -1,0 +1,119 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<title>Function get_num_uncaught_exceptions</title>
+<link rel="stylesheet" href="../../boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../exception.html#header.cradle.exception.uncaught_exception_hpp" title="Header &lt;cradle/exception/uncaught_exception.hpp&gt;">
+<link rel="prev" href="../../exception.html" title="Chapter&#160;1.&#160;Cradle.Exception">
+<link rel="next" href="../../mpl.html" title="Chapter&#160;2.&#160;Cradle.MPL">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="spirit-nav">
+<a accesskey="p" href="../../exception.html"><img src="../../images/prev.png" alt="Prev"></a><a accesskey="u" href="../../exception.html#header.cradle.exception.uncaught_exception_hpp"><img src="../../images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../images/home.png" alt="Home"></a><a accesskey="n" href="../../mpl.html"><img src="../../images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="cradle.exceptions.get_num_uncaugh_idp8596944"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Function get_num_uncaught_exceptions</span></h2>
+<p>cradle::exceptions::get_num_uncaught_exceptions &#8212; 
+                Returns the number of uncaught exceptions.
+              </p>
+</div>
+<h2 xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv-title">Synopsis</h2>
+<div xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../exception.html#header.cradle.exception.uncaught_exception_hpp" title="Header &lt;cradle/exception/uncaught_exception.hpp&gt;">cradle/exception/uncaught_exception.hpp</a>&gt;
+
+</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">get_num_uncaught_exceptions</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="idp53296"></a><h2>Description</h2>
+<p>
+                <span class="termdef">[Definition: 
+                  In this description, <em class="replaceable"><code>X</code></em> and <em class="replaceable"><code>Y</code></em> denote evaluations<sup>[<a name="idp55200" href="#ftn.idp55200" class="footnote">1</a>]</sup>. <em class="replaceable"><code>Y</code></em> is said to be a <em class="firstterm">direct predecessor</em> of <em class="replaceable"><code>X</code></em> if
+                  <em class="replaceable"><code>Y</code></em> is sequenced before<sup>[<a name="idp58832" href="#ftn.idp58832" class="footnote">2</a>]</sup> <em class="replaceable"><code>X</code></em> and there is no other evaluation <em class="replaceable"><code>Z</code></em> such that <em class="replaceable"><code>Z</code></em> is sequenced before
+                  <em class="replaceable"><code>X</code></em> and <em class="replaceable"><code>Y</code></em> is sequenced before <em class="replaceable"><code>Z</code></em>.
+                ]</span>
+              </p>
+<p>
+                <span class="termdef">[Definition: 
+                  The <em class="firstterm">number of uncaught exceptions</em> is a natural number defined for every evaluation in a well-formed program<sup>[<a name="idp63952" href="#ftn.idp63952" class="footnote">3</a>]</sup>. The number of uncaught exceptions of an evaluation is defined as follows;
+                  <div class="itemizedlist"><ul class="itemizedlist" type="disc">
+<li class="listitem">0 if the evaluation does not have any direct predecessor, otherwise
+                    </li>
+<li class="listitem">n + 1 if one of the direct predecessors of the evaluation is an evaluation of a
+                      <em class="replaceable"><code>throw-expression</code></em><sup>[<a name="idp4733984" href="#ftn.idp4733984" class="footnote">4</a>]</sup> and the number of uncaught exceptions for the direct predecessor is n, otherwise
+                    </li>
+<li class="listitem">n - 1 if the evaluation is of an expression in the <em class="replaceable"><code>compound-statement</code></em> of a
+                      <em class="replaceable"><code>handler</code></em><sup>[<a name="idp4737168" href="#ftn.idp4737168" class="footnote">5</a>]</sup> and one of the direct predecessors of the evauation is not an evaluation of an expression in the same
+                      <em class="replaceable"><code>compound-statement</code></em> and the number of uncaught exceptions for the direct predecessor is n.
+                    </li>
+</ul></div>
+                ]</span>
+                <sup>[<a name="idp4739856" href="#ftn.idp4739856" class="footnote">6</a>]</sup>
+              </p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td>The number of uncaught exceptions.</td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>
+                Nothing.
+              </td>
+</tr>
+<tr>
+<td><p><span class="term">Complexity:</span></p></td>
+<td>
+                Constant.
+              </td>
+</tr>
+<tr>
+<td><p><span class="term">Notes:</span></p></td>
+<td>
+                Guarantees strong thread-safety.
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="footnotes">
+<br><hr width="100" align="left">
+<div class="footnote"><p><sup>[<a id="ftn.idp55200" href="#idp55200" class="simpara">1</a>] </sup>
+                      Defined in [intro.execution]/12, <em class="citetitle">ISO/IEC 14882:2011</em>.
+                    </p></div>
+<div class="footnote"><p><sup>[<a id="ftn.idp58832" href="#idp58832" class="simpara">2</a>] </sup>
+                      Defined in [intro.execution]/13, <em class="citetitle">ISO/IEC 14882:2011</em>.
+                    </p></div>
+<div class="footnote"><p><sup>[<a id="ftn.idp63952" href="#idp63952" class="simpara">3</a>] </sup>
+                      Defined in [defns.well.formed], <em class="citetitle">ISO/IEC 14882:2011</em>.
+                    </p></div>
+<div class="footnote"><p><sup>[<a id="ftn.idp4733984" href="#idp4733984" class="simpara">4</a>] </sup>
+                          Defined in [except.throw], <em class="citetitle">ISO/IEC 14882:2011</em>.
+                        </p></div>
+<div class="footnote"><p><sup>[<a id="ftn.idp4737168" href="#idp4737168" class="simpara">5</a>] </sup>
+                          Defined in [except]/1 and [except.handle]/1, <em class="citetitle">ISO/IEC 14882:2011</em>.
+                        </p></div>
+<div class="footnote"><p><sup>[<a id="ftn.idp4739856" href="#idp4739856" class="simpara">6</a>] </sup>
+                    It cannot happen that the numbers of uncaught exceptions are different among the direct predecessors of an evaluation in any well-defined program.
+                  </p></div>
+</div>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright &#169; 2013 Cryolite<p>
+        Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file <code class="filename">LICENSE_1_0.txt</code> or copy at
+        <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../../exception.html"><img src="../../images/prev.png" alt="Prev"></a><a accesskey="u" href="../../exception.html#header.cradle.exception.uncaught_exception_hpp"><img src="../../images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../images/home.png" alt="Home"></a><a accesskey="n" href="../../mpl.html"><img src="../../images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>
