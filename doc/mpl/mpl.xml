@@ -41,7 +41,7 @@
             <description>
               <simpara>
                 In this description, <code>X</code> denotes a type, <code>ci</code> denotes an rvalue of type <code>X</code>,
-                and <code>s</code> denotes an rvalue of type <code>string&lt;X, c1, c2, ..., cN;&gt;</code>.
+                and <code>s</code> denotes an rvalue of type <code>string&lt;X, c1, c2, ..., cN&gt;</code>.
               </simpara>
               <variablelist>
                 <varlistentry>
@@ -176,6 +176,20 @@
                 </varlistentry>
               </variablelist>
             </description>
+            <typedef name="value_type">
+              <type>std::array&lt;T, sizeof...(Chars)&gt;</type>
+            </typedef>
+            <typedef name="type">
+              <type>string&lt;T, Chars...&gt;</type>
+            </typedef>
+            <data-member name="value" specifiers="static constexpr">
+              <type>value_type</type>
+            </data-member>
+            <method-group name="conversion">
+              <method name="value_type" specifiers="constexpr">
+                <type>operator</type>
+              </method>
+            </method-group>
           </struct>
         </namespace>
       </namespace>
@@ -189,7 +203,7 @@
                 <para>
                   Should be used only in the following form;
                   <programlisting>CRADLE_MPL_STRING ( <replaceable>string-literal</replaceable> ) </programlisting>
-                  Any other forms of use are ill-formed; no diagnostic required. This form can be used only as <replaceable>simple-type-specifier</replaceable>.
+                  Any other forms of use are ill-formed; no diagnostic required. This form should be used only as <replaceable>simple-type-specifier</replaceable>.
                 </para>
               </listitem>
             </varlistentry>
