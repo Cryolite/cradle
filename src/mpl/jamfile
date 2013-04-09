@@ -1,0 +1,23 @@
+project cradle/src/mpl
+  : requirements
+    <source>/cradle/ext/boost//headers_compile
+    <library>/cradle/ext/boost//headers_link
+  ;
+
+import regex ;
+import path ;
+
+local .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
+.here = [ path.make "$(.here)" ] ;
+
+local .objs ;
+
+for local i in [ path.glob "$(.here)" : *.cpp ] {
+  obj "$(i:B).obj" : "$(i)" : $(CRADLE_COMPILE_PROPERTIES) ;
+  explicit "$(i:B).obj" ;
+  .objs += "$(i:B).obj" ;
+}
+
+alias compile ;
+
+alias link : : : : <library>"$(.objs)" ;

@@ -79,6 +79,7 @@ use-project /cradle/ext/glibc : ext/glibc ;
 use-project /cradle/ext/libstdcxx : ext/libstdcxx ;
 use-project /cradle/ext/boost : ext/boost ;
 use-project /cradle/src : src ;
+use-project /cradle/src/mpl : src/mpl ;
 use-project /cradle/src/exception : src/exception ;
 use-project /cradle/src/scope_guard : src/scope_guard ;
 
