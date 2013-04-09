@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE library PUBLIC "-//Boost//DTD BoostBook XML V1.0//EN"
+  "http://www.boost.org/tools/boostbook/dtd/1.1/boostbook.dtd">
+<library name="MPL" dirname="mpl" xmlns:xi="http://www.w3.org/2001/XInclude" 
+         id="mpl" last-revision="2013-04-09">
+  <libraryinfo>
+    <author>
+      <personname>
+        <firstname>Cryolite</firstname>
+      </personname>
+    </author>
+    <copyright>
+      <year>2013</year>
+      <holder>Cryolite</holder>
+    </copyright>
+    <legalnotice>
+      <para>
+        Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file <filename>LICENSE_1_0.txt</filename> or copy at
+        <ulink url="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</ulink>)
+      </para>
+    </legalnotice>
+    <librarypurpose>Supplement for <ulink url="http://www.boost.org/libs/mpl/doc/index.html">Boost.MPL</ulink></librarypurpose>
+    <librarycategory>Template Metaprogramming</librarycategory>
+  </libraryinfo>
+
+  <title>Cradle.MPL</title>
+
+  <library-reference>
+    <header name="cradle/mpl/string.hpp">
+      <namespace name="cradle">
+        <namespace name="mpl">
+          <struct name="string">
+            <template>
+              <template-type-parameter name="T"/>
+              <template-nontype-parameter name="Chars" pack="1">
+                <type>T</type>
+              </template-nontype-parameter>
+            </template>
+            <purpose>A wrapper of a compile-time string.</purpose>
+            <description>
+              <simpara>
+                In this description, <code>X</code> denotes a type, <code>ci</code> denotes an rvalue of type <code>X</code>,
+                and <code>s</code> denotes an rvalue of type <code>string&lt;X, c1, c2, ..., cN;&gt;</code>.
+              </simpara>
+              <variablelist>
+                <varlistentry>
+                  <term>Requires</term>
+                  <listitem>
+                    <simpara>
+                      <varname>T</varname> should be either <code>char</code>, <code>wchar_t</code>, <code>char16_t</code> or <code>char32_t</code>.
+                    </simpara>
+                    <simpara>
+                      <code>sizeof...(Chars) + 1</code> should be less than the implementation quantity of template arguments in a template declaration<footnote>
+                        <simpara>
+                          The quantity recommended in [implimits], <citetitle pubwork="book">ISO/IEC 14882:2011</citetitle> is 1024.
+                        </simpara>
+                      </footnote>.
+                    </simpara>
+                  </listitem>
+                </varlistentry>
+                <varlistentry>
+                  <term>Valid syntaxes</term>
+                  <listitem>
+                    <itemizedlist>
+                      <listitem>
+                        <programlisting>string&lt;X, c1, c2, ..., cN&gt;::value_type</programlisting>
+                        <variablelist>
+                          <varlistentry>
+                            <term>Category</term>
+                            <listitem>
+                              <simpara>
+                                Type.
+                              </simpara>
+                            </listitem>
+                          </varlistentry>
+                          <varlistentry>
+                            <term>Returns</term>
+                            <listitem>
+                              <simpara>
+                                <code>std::array&lt;X, N&gt;</code>
+                              </simpara>
+                            </listitem>
+                          </varlistentry>
+                        </variablelist>
+                      </listitem>
+                      <listitem>
+                        <programlisting>string&lt;X, c1, c2, ..., cN&gt;::value</programlisting>
+                        <variablelist>
+                          <varlistentry>
+                            <term>Category</term>
+                            <listitem>
+                              <simpara>
+                                Value.
+                              </simpara>
+                            </listitem>
+                          </varlistentry>
+                          <varlistentry>
+                            <term>Type</term>
+                            <listitem>
+                              <simpara>
+                                <code>string&lt;X, c1, c2, ..., cN&gt;::value_type</code>.
+                              </simpara>
+                            </listitem>
+                          </varlistentry>
+                          <varlistentry>
+                            <term>Returns</term>
+                            <listitem>
+                              <simpara>
+                                A constant expression of type <code>value_type</code> whose i-th element is equal to <code>ci</code>.
+                              </simpara>
+                            </listitem>
+                          </varlistentry>
+                        </variablelist>
+                      </listitem>
+                      <listitem>
+                        <programlisting>string&lt;X, c1, c2, ..., cN&gt;::type</programlisting>
+                        <variablelist>
+                          <varlistentry>
+                            <term>Category</term>
+                            <listitem>
+                              <simpara>
+                                Type.
+                              </simpara>
+                            </listitem>
+                          </varlistentry>
+                          <varlistentry>
+                            <term>Returns</term>
+                            <listitem>
+                              <simpara>
+                                <code>string&lt;X, c1, c2, ..., cN&gt;</code>.
+                              </simpara>
+                            </listitem>
+                          </varlistentry>
+                        </variablelist>
+                      </listitem>
+                      <listitem>
+                        <programlisting>static_cast&lt;string&lt;X, c1, c2, ..., cN&gt;::value_type&gt;(s)</programlisting>
+                        <variablelist>
+                          <varlistentry>
+                            <term>Category</term>
+                            <listitem>
+                              <simpara>
+                                Value.
+                              </simpara>
+                            </listitem>
+                          </varlistentry>
+                          <varlistentry>
+                            <term>Type</term>
+                            <listitem>
+                              <simpara>
+                                Convertible to <code>value_type</code>.
+                              </simpara>
+                            </listitem>
+                          </varlistentry>
+                          <varlistentry>
+                            <term>Returns</term>
+                            <listitem>
+                              <simpara>
+                                <code>value</code>.
+                              </simpara>
+                            </listitem>
+                          </varlistentry>
+                          <varlistentry>
+                            <term>Throws</term>
+                            <listitem>
+                              <simpara>
+                                Nothing.
+                              </simpara>
+                            </listitem>
+                          </varlistentry>
+                        </variablelist>
+                      </listitem>
+                    </itemizedlist>
+                  </listitem>
+                </varlistentry>
+              </variablelist>
+            </description>
+          </struct>
+        </namespace>
+      </namespace>
+      <macro name="CRADLE_MPL_STRING">
+        <purpose>Creates <code><structname>cradle::mpl::string</structname></code> from a <replaceable>string-literal</replaceable>.</purpose>
+        <description>
+          <variablelist>
+            <varlistentry>
+              <term>Requires</term>
+              <listitem>
+                <para>
+                  Should be used only in the following form;
+                  <programlisting>CRADLE_MPL_STRING ( <replaceable>string-literal</replaceable> ) </programlisting>
+                  Any other forms of use are ill-formed; no diagnostic required. This form can be used only as <replaceable>simple-type-specifier</replaceable>.
+                </para>
+              </listitem>
+            </varlistentry>
+            <varlistentry>
+              <term>Approximate expansion</term>
+              <listitem>
+                <para>
+                  <programlisting>CRADLE_MPL_STRING ( <replaceable>string-literal</replaceable> )</programlisting>
+                  is equivalent to
+<programlisting>::<classname>cradle::mpl::string</classname>&lt;
+  ::std::remove_const&lt;
+    ::std::remove_reference&lt;
+      decltype(<replaceable>string-literal</replaceable>[0])&gt;::type&gt;::type,
+  <replaceable>string-literal</replaceable>[0],
+  <replaceable>string-literal</replaceable>[1],
+  .....
+  <replaceable>string-literal</replaceable>[N]&gt;</programlisting>
+                  where <code>N</code> is equal to <code>sizeof(<replaceable>string-literal</replaceable>) / sizeof(<replaceable>string-literal</replaceable>)</code>.
+                </para>
+              </listitem>
+            </varlistentry>
+          </variablelist>
+        </description>
+      </macro>
+    </header>
+  </library-reference>
+</library>

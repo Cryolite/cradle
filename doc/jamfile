@@ -6,6 +6,7 @@ import boostbook : boostbook ;
 boostbook doc
   : cradle.xml
   : <dependency>exception/exception.xml
+    <dependency>mpl/mpl.xml
     <dependency>scope_guard/scope_guard.xml
     <dependency>type_traits/type_traits.xml
   ;
