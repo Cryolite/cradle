@@ -1,11 +1,8 @@
 project cradle/src/mpl
-  : requirements
-    <source>/cradle/ext/boost//headers_compile
-    <library>/cradle/ext/boost//headers_link
   ;
 
-import regex ;
 import path ;
+import regex ;
 
 local .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
 .here = [ path.make "$(.here)" ] ;

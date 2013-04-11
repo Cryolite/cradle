@@ -4,8 +4,8 @@ project cradle/src/scope_guard
     <library>/cradle/src/exception//link
   ;
 
-import regex ;
 import path ;
+import regex ;
 
 local .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
 .here = [ path.make "$(.here)" ] ;

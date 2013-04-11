@@ -85,6 +85,6 @@ use-project /cradle/src/exception : src/exception ;
 use-project /cradle/src/scope_guard : src/scope_guard ;
 
 alias check
-  : test//tests
+  : test//check
   ;
 explicit check ;

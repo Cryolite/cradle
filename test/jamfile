@@ -1,18 +1,20 @@
-if "$(CRADLE_WITH_INTRO)" {
+if "$(CRADLE_WITH_INTRO)" = "yes" {
   project cradle/test
+    : requirements
+      <source>/cradle/ext/boost//headers
+      <source>/cradle/ext/boost//unit_test_framework
     : default-build
       <memory-checker>on
       <libstdc++-debug-mode>on
       <catchsegv>on
       <cradle-checking>on
-      <source>/cradle/ext/boost//headers_compile
-      <source>/cradle/ext/boost//unit_test_framework_compile
-      <library>/cradle/ext/boost//headers_link
-      <library>/cradle/ext/boost//unit_test_framework_link
     ;
 }
 else {
   project cradle/test
+    : requirements
+      <source>/cradle/ext/boost//headers
+      <source>/cradle/ext/boost//unit_test_framework
     : default-build
       #<toolset>gcc:<define>_GLIBCXX_DEBUG
       #<toolset>gcc:<define>_GLIBCXX_DEBUG_PEDANTIC
@@ -22,15 +24,11 @@ else {
       #<toolset>intel:<define>_GLIBCXX_DEBUG_PEDANTIC
       #<toolset>clang:<cflags>-fsanitize=address
       <cradle-checking>on
-      <source>/cradle/ext/boost//headers_compile
-      <source>/cradle/ext/boost//unit_test_framework_compile
-      <library>/cradle/ext/boost//headers_link
-      <library>/cradle/ext/boost//unit_test_framework_link
     ;
 }
 
-import regex ;
 import path ;
+import regex ;
 
 local .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
 .here = [ path.make "$(.here)" ] ;
@@ -42,6 +40,6 @@ for local i in [ path.glob "$(.here)" : * ] {
   }
 }
 
-alias tests
-  : "$(.direct-subdirs)//tests"
+alias check
+  : "$(.direct-subdirs)//check"
   ;

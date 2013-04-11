@@ -1,10 +1,6 @@
 project cradle/ext/boost
   ;
 
-import modules ;
-
-local .boost-root = [ modules.peek : BOOST_ROOT ] ;
-
 for local i in headers chrono date_time filesystem graph graph_parallel
                iostreams locale math_c99 math_c99f math_c99l math_tr1
                math_tr1f math_tr1l mpi prg_exec_monitor program_options
@@ -15,19 +11,38 @@ for local i in headers chrono date_time filesystem graph graph_parallel
   alias "$(i)_compile"
     : "/site-config//boost_$(i)_compile"
     ;
-  explicit "$(i)_compile" ;
+  explicit "$(i)_compile"
+    ;
   alias "$(i)_link"
     : "/site-config//boost_$(i)_link"
     ;
-  explicit "$(i)_link" ;
+  explicit "$(i)_link"
+    ;
+  alias "$(i)"
+    : "$(i)_compile"
+    :
+    :
+    : "<library>$(i)_link"
+    ;
+  explicit "$(i)"
+    ;
 }
 
 alias "exception_compile"
   : "/site-config//boost_exception_compile/<link>static"
   ;
-explicit "exception_compile" ;
-
+explicit "exception_compile"
+  ;
 alias "exception_link"
   : "/site-config//boost_exception_link/<link>static"
   ;
-explicit "exception_link" ;
+explicit "exception_link"
+  ;
+alias "exception"
+  : "exception_compile"
+  :
+  :
+  : "<library>$(i)_link"
+  ;
+explicit "exception"
+  ;

@@ -3,8 +3,8 @@ project cradle/test/preprocessor
     <toolset>msvc:<cxxflags>"/we4003"
   ;
 
-import regex ;
 import path ;
+import regex ;
 
 local .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
 .here = [ path.make "$(.here)" ] ;
@@ -39,7 +39,7 @@ for local i in [ path.glob "$(.here)" : * ] {
   }
 }
 
-alias tests
-  : "$(.direct-subdirs)//tests"
-    "$(.tests)"
+alias check
+  #: "$(.direct-subdirs)//check"
+  #  "$(.tests)"
   ;
