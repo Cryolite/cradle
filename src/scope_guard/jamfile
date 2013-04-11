@@ -1,4 +1,7 @@
 project cradle/src/scope_guard
+  : requirements
+    <source>/cradle/src/exception//compile
+    <library>/cradle/src/exception//link
   ;
 
 import regex ;
