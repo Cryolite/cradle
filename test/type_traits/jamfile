@@ -1,7 +1,7 @@
 project cradle/test/type_traits
   : requirements
-    #<source>/cradle/src/type_traits//compile
-    #<library>/cradle/src/type_traits//link
+    <source>/cradle/src/type_traits//compile
+    <library>/cradle/src/type_traits//link
   ;
 
 import regex ;
