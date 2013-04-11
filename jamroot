@@ -4,7 +4,7 @@ import feature ;
 import option ;
 
 
-local with-intro = [ option.get "intro" : "UNSPECIFIED" : "IMPLIED" ] ;
+local with-intro = [ option.get "with-intro" : "UNSPECIFIED" : "IMPLIED" ] ;
 switch "$(with-intro)" {
 case "UNSPECIFIED" :
   with-intro = "no" ;
