@@ -1,0 +1,33 @@
+project cradle/test/coverage
+  : requirements
+    <cradle-coverage>on
+  ;
+
+import path ;
+import regex ;
+
+local .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
+.here = [ path.make "$(.here)" ] ;
+
+make "$(.here)/index.html" : ..//check : @genhtml ;
+
+rule genhtml ( targets * : sources * : properties * )
+{
+  HERE on $(targets) = [ path.native "$(CRADLE_ROOT)/test/coverage" ] ;
+  CRADLE_ROOT_GCOV_PATH on $(targets) = [ regex.replace "$(CRADLE_ROOT)" "/" "#" ] ;
+}
+actions genhtml
+{
+  [ `pwd` = "$(HERE)" ] || exit 1
+  lcov --capture --directory ../../bin --output-file all.info --gcov-tool /home/cryolite/local/gcc-snapshot/bin/gcov
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+  lcov --extract all.info '$(CRADLE_ROOT)/*' --output-file coverage.info
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+  genhtml --output-directory . --demangle-cpp coverage.info
+}
+
+alias check ;

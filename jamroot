@@ -34,6 +34,15 @@ feature.compose <cradle-checking>pedantic
     <define>CRADLE_CHECKING_PEDANTIC
   ;
 
+feature.feature cradle-coverage
+  : off on
+  : propagated composite
+  ;
+feature.compose <cradle-coverage>on
+  : <cflags>--coverage
+    <linkflags>--coverage
+  ;
+
 
 if "$(CRADLE_WITH_INTRO)" = "yes" {
   project cradle
