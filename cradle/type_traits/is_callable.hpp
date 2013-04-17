@@ -2,8 +2,8 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(CRADLE_FUNCTIONAL_INVOKE_HPP_INCLUDE_GUARD)
-#define CRADLE_FUNCTIONAL_INVOKE_HPP_INCLUDE_GUARD
+#if !defined(CRADLE_TYPE_TRAITS_IS_CALLABLE_HPP_INCLUDE_GUARD)
+#define CRADLE_TYPE_TRAITS_IS_CALLABLE_HPP_INCLUDE_GUARD
 
 #include <cradle/type_traits/identity.hpp>
 #include <cradle/utility/simple_auto_forward_return.hpp>
@@ -757,6 +757,29 @@ CRADLE_SIMPLE_AUTO_FORWARD_RETURN(
   detail_::invoke_0a_(cradle::identity<R>(),
                       std::forward<F>(f), std::forward<Args>(args)...))
 
+namespace detail_{
+
+template<typename F, typename... Args,
+         typename = decltype(
+           cradle::invoke(std::declval<F>(), std::declval<Args>()...))>
+constexpr bool is_callable_test_(int) noexcept
+{
+  return true;
+}
+
+template<typename F, typename... Args>
+constexpr bool is_callable_test_(bool) noexcept
+{
+  return false;
+}
+
+} // namepsace detail_
+
+template<typename F, typename... Args>
+struct is_callable
+  : std::integral_constant<bool, detail_::is_callable_test_<F, Args...>(0)>
+{}; // struct is_callable
+
 } // namespace cradle
 
-#endif // !defined(CRADLE_FUNCTIONAL_INVOKE_HPP_INCLUDE_GUARD)
+#endif // !defined(CRADLE_TYPE_TRAITS_IS_CALLABLE_HPP_INCLUDE_GUARD)
