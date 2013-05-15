@@ -1,7 +1,7 @@
-project cradle/test/functional
+project cradle/test/unit/scope_guard
   : requirements
-    <source>/cradle/src/functional//compile
-    <library>/cradle/src/functional//link
+    <source>/cradle/src/scope_guard//compile
+    <library>/cradle/src/scope_guard//link
   ;
 
 import path ;

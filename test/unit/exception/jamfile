@@ -1,7 +1,7 @@
-project cradle/test/utility
+project cradle/test/unit/exception
   : requirements
-    <source>/cradle/src/utility//compile
-    <library>/cradle/src/utility//link
+    <source>/cradle/src/exception//compile
+    <library>/cradle/src/exception//link
   ;
 
 import path ;
