@@ -1,5 +1,5 @@
 if "$(CRADLE_WITH_INTRO)" = "yes" {
-  project cradle/test
+  project cradle/test/unit
     : requirements
       <source>/cradle/ext/boost//headers
       <source>/cradle/ext/boost//unit_test_framework
@@ -8,10 +8,11 @@ if "$(CRADLE_WITH_INTRO)" = "yes" {
       <libstdc++-debug-mode>on
       <catchsegv>on
       <cradle-checking>on
+      <cradle-coverage>on
     ;
 }
 else {
-  project cradle/test
+  project cradle/test/unit
     : requirements
       <source>/cradle/ext/boost//headers
       <source>/cradle/ext/boost//unit_test_framework
@@ -24,6 +25,7 @@ else {
       #<toolset>intel:<define>_GLIBCXX_DEBUG_PEDANTIC
       #<toolset>clang:<cflags>-fsanitize=address
       <cradle-checking>on
+      <cradle-coverage>on
     ;
 }
 

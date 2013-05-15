@@ -1,7 +1,7 @@
-project cradle/test/mpl
+project cradle/test/unit/functional
   : requirements
-    <source>/cradle/src/mpl//compile
-    <library>/cradle/src/mpl//link
+    <source>/cradle/src/functional//compile
+    <library>/cradle/src/functional//link
   ;
 
 import path ;
