@@ -1,7 +1,7 @@
-project cradle/test/type_traits
+project cradle/test/unit/utility
   : requirements
-    <source>/cradle/src/type_traits//compile
-    <library>/cradle/src/type_traits//link
+    <source>/cradle/src/utility//compile
+    <library>/cradle/src/utility//link
   ;
 
 import path ;

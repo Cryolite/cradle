@@ -1,33 +1,54 @@
 project cradle/test/coverage
-  : requirements
-    <cradle-coverage>on
   ;
 
+import feature ;
 import path ;
 import regex ;
 
-local .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
+.here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
 .here = [ path.make "$(.here)" ] ;
 
-make "$(.here)/index.html" : ..//check : @genhtml ;
+constant NOARCH_PROPERTIES
+  : [ feature.defaults <host-os> ]
+    [ feature.defaults <target-os> ]
+    [ feature.defaults <variant> ]
+    [ feature.defaults <link> ]
+    [ feature.defaults <runtime-link> ]
+    [ feature.defaults <runtime-debugging> ]
+    [ feature.defaults <optimization> ]
+    [ feature.defaults <profiling> ]
+    [ feature.defaults <inlining> ]
+    [ feature.defaults <threading> ]
+    <address-model>64
+    <instruction-set>native
+    [ feature.defaults <std> ]
+    [ feature.defaults <lto> ]
+    [ feature.defaults <correct-call-stack> ]
+    [ feature.defaults <ssp> ]
+    [ feature.defaults <memory-checker> ]
+    [ feature.defaults <libstdc++-debug-mode> ]
+  ;
+
+make "$(.here)/index.html" : : @genhtml : $(NOARCH_PROPERTIES) ;
+explicit "$(.here)/index.html" ;
 
 rule genhtml ( targets * : sources * : properties * )
 {
-  HERE on $(targets) = [ path.native "$(CRADLE_ROOT)/test/coverage" ] ;
-  CRADLE_ROOT_GCOV_PATH on $(targets) = [ regex.replace "$(CRADLE_ROOT)" "/" "#" ] ;
+  HERE on $(targets) = [ path.native "$(.here)" ] ;
+  local here_relative = [ path.relative "$(.here)" "$(CRADLE_ROOT)" ] ;
+  HERE_RELATIVE on $(targets) = [ path.native "$(here_relative)" ] ;
 }
 actions genhtml
 {
-  [ `pwd` = "$(HERE)" ] || exit 1
-  lcov --capture --directory ../../bin --output-file all.info --gcov-tool /home/cryolite/local/gcc-snapshot/bin/gcov
-  if [ $? -ne 0 ]; then
-    exit 1
-  fi
-  lcov --extract all.info '$(CRADLE_ROOT)/*' --output-file coverage.info
-  if [ $? -ne 0 ]; then
-    exit 1
-  fi
-  genhtml --output-directory . --demangle-cpp coverage.info
+exec bash -s << 'EOS'
+  LINENO_ADJ=`grep -Fn 3f08fc4a-f996-4ab5-a766-aeb09b08d60e '$(HERE)/jamfile' | grep -Eo '^[[:digit:]]+'`
+  LINENO_ADJ=`expr $LINENO_ADJ - $LINENO + 1`
+  PS4='+$(HERE_RELATIVE)/jamfile:`expr $LINENO + $LINENO_ADJ`: '
+  set -ex
+  lcov --capture --directory '$(CRADLE_ROOT)/bin' --output-file '$(HERE)/all.info'
+  lcov --extract '$(HERE)/all.info' '$(CRADLE_ROOT)/*' --output-file '$(HERE)/cradle.info'
+  genhtml --output-directory '$(HERE)' --demangle-cpp '$(HERE)/cradle.info'
+EOS
 }
 
-alias check ;
+alias check : "$(.here)/index.html" ;

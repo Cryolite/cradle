@@ -96,6 +96,6 @@ use-project /cradle/src/functional : src/functional ;
 use-project /cradle/src/scope_guard : src/scope_guard ;
 
 alias check
-  : test//check
+  : test/unit//check
   ;
 explicit check ;
