@@ -9,27 +9,6 @@ import regex ;
 .here = [ path.make "$(.here)" ] ;
 .here_relative = [ path.relative "$(.here)" "$(CRADLE_ROOT)" ] ;
 
-constant NOARCH_PROPERTIES
-  : [ feature.defaults <host-os> ]
-    [ feature.defaults <target-os> ]
-    [ feature.defaults <variant> ]
-    [ feature.defaults <link> ]
-    [ feature.defaults <runtime-link> ]
-    [ feature.defaults <runtime-debugging> ]
-    [ feature.defaults <optimization> ]
-    [ feature.defaults <profiling> ]
-    [ feature.defaults <inlining> ]
-    [ feature.defaults <threading> ]
-    <address-model>64
-    <instruction-set>native
-    [ feature.defaults <std> ]
-    [ feature.defaults <lto> ]
-    [ feature.defaults <correct-call-stack> ]
-    [ feature.defaults <ssp> ]
-    [ feature.defaults <memory-checker> ]
-    [ feature.defaults <libstdc++-debug-mode> ]
-  ;
-
 make "$(.here)/index.html" : : @genhtml : $(NOARCH_PROPERTIES) ;
 explicit "$(.here)/index.html" ;
 
