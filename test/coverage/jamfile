@@ -1,5 +1,4 @@
-project cradle/test/coverage
-  ;
+project cradle/test/coverage ;
 
 import feature ;
 import path ;
@@ -7,6 +6,7 @@ import regex ;
 
 .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
 .here = [ path.make "$(.here)" ] ;
+.here_relative = [ path.relative "$(.here)" "$(CRADLE_ROOT)" ] ;
 
 constant NOARCH_PROPERTIES
   : [ feature.defaults <host-os> ]
@@ -29,26 +29,11 @@ constant NOARCH_PROPERTIES
     [ feature.defaults <libstdc++-debug-mode> ]
   ;
 
-make "$(.here)/index.html" : : @genhtml : $(NOARCH_PROPERTIES) ;
-explicit "$(.here)/index.html" ;
-
-rule genhtml ( targets * : sources * : properties * )
-{
-  HERE on $(targets) = [ path.native "$(.here)" ] ;
-  local here_relative = [ path.relative "$(.here)" "$(CRADLE_ROOT)" ] ;
-  HERE_RELATIVE on $(targets) = [ path.native "$(here_relative)" ] ;
-}
-actions genhtml
-{
-exec bash -s << 'EOS'
-  LINENO_ADJ=`grep -Fn 3f08fc4a-f996-4ab5-a766-aeb09b08d60e '$(HERE)/jamfile' | grep -Eo '^[[:digit:]]+'`
-  LINENO_ADJ=`expr $LINENO_ADJ - $LINENO + 1`
-  PS4='+$(HERE_RELATIVE)/jamfile:`expr $LINENO + $LINENO_ADJ`: '
-  set -ex
-  lcov --capture --directory '$(CRADLE_ROOT)/bin' --output-file '$(HERE)/all.info'
-  lcov --extract '$(HERE)/all.info' '$(CRADLE_ROOT)/*' --output-file '$(HERE)/cradle.info'
-  genhtml --output-directory '$(HERE)' --demangle-cpp '$(HERE)/cradle.info'
-EOS
+local .direct-subdirs ;
+for local i in [ path.glob "$(.here)" : * ] {
+  if [ path.exists "$(i)/jamfile" ] {
+    .direct-subdirs += "$(i:B)" ;
+  }
 }
 
-alias check : "$(.here)/index.html" ;
+alias check : "$(.direct-subdirs)//check" ;
