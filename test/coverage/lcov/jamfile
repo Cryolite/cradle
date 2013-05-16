@@ -1,4 +1,4 @@
-project cradle/test/coverage
+project cradle/test/coverage/lcov
   ;
 
 import feature ;
@@ -7,6 +7,7 @@ import regex ;
 
 .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
 .here = [ path.make "$(.here)" ] ;
+.here_relative = [ path.relative "$(.here)" "$(CRADLE_ROOT)" ] ;
 
 constant NOARCH_PROPERTIES
   : [ feature.defaults <host-os> ]
@@ -35,8 +36,7 @@ explicit "$(.here)/index.html" ;
 rule genhtml ( targets * : sources * : properties * )
 {
   HERE on $(targets) = [ path.native "$(.here)" ] ;
-  local here_relative = [ path.relative "$(.here)" "$(CRADLE_ROOT)" ] ;
-  HERE_RELATIVE on $(targets) = [ path.native "$(here_relative)" ] ;
+  HERE_RELATIVE on $(targets) = [ path.native "$(.here_relative)" ] ;
 }
 actions genhtml
 {
