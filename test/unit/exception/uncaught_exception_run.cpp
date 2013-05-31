@@ -11,6 +11,7 @@
 #include <stdexcept>
 #include <memory>
 #include <string>
+#include <iostream>
 #include <fstream>
 
 class GlobalFixture
