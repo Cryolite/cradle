@@ -1,9 +1,14 @@
 #include <cradle/mpl/string.hpp>
 
-#include <type_traits>
+#include <boost/test/unit_test.hpp>
 #include <array>
+#include <type_traits>
 
-void testOrdinary0()
+BOOST_AUTO_TEST_SUITE(mpl)
+
+BOOST_AUTO_TEST_SUITE(string)
+
+BOOST_AUTO_TEST_CASE(narrow_0)
 {
   typedef CRADLE_MPL_STRING("") str;
   static_assert(std::is_same<str, cradle::mpl::string<char> >::value, "");
@@ -16,7 +21,7 @@ void testOrdinary0()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testOrdinary1()
+BOOST_AUTO_TEST_CASE(narrow_1)
 {
   typedef CRADLE_MPL_STRING("a") str;
   static_assert(
@@ -31,7 +36,7 @@ void testOrdinary1()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testOrdinary2()
+BOOST_AUTO_TEST_CASE(narrow_2)
 {
   typedef CRADLE_MPL_STRING("ab") str;
   static_assert(
@@ -47,7 +52,7 @@ void testOrdinary2()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testOrdinary3()
+BOOST_AUTO_TEST_CASE(narrow_3)
 {
   typedef CRADLE_MPL_STRING("abc") str;
   static_assert(
@@ -65,7 +70,7 @@ void testOrdinary3()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testOrdinary4()
+BOOST_AUTO_TEST_CASE(narrow_4)
 {
   typedef CRADLE_MPL_STRING("abcd") str;
   static_assert(
@@ -86,7 +91,7 @@ void testOrdinary4()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testOrdinary5()
+BOOST_AUTO_TEST_CASE(narrow_5)
 {
   typedef CRADLE_MPL_STRING("abcde") str;
   static_assert(
@@ -108,7 +113,7 @@ void testOrdinary5()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testOrdinary6()
+BOOST_AUTO_TEST_CASE(narrow_6)
 {
   typedef CRADLE_MPL_STRING("abcdef") str;
   static_assert(
@@ -131,7 +136,7 @@ void testOrdinary6()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testOrdinary7()
+BOOST_AUTO_TEST_CASE(narrow_7)
 {
   typedef CRADLE_MPL_STRING("abcdefg") str;
   static_assert(
@@ -155,7 +160,7 @@ void testOrdinary7()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testOrdinary8()
+BOOST_AUTO_TEST_CASE(narrow_8)
 {
   typedef CRADLE_MPL_STRING("abcdefgh") str;
   static_assert(
@@ -181,7 +186,7 @@ void testOrdinary8()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testOrdinary9()
+BOOST_AUTO_TEST_CASE(narrow_9)
 {
   typedef CRADLE_MPL_STRING("abcdefghi") str;
   static_assert(
@@ -208,7 +213,7 @@ void testOrdinary9()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testOrdinaryLimit()
+BOOST_AUTO_TEST_CASE(narrow_limit)
 {
   typedef CRADLE_MPL_STRING("abcdefghiaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabcdefghi") str;
   typedef str::value_type value_type;
@@ -238,7 +243,20 @@ void testOrdinaryLimit()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testU8()
+BOOST_AUTO_TEST_CASE(u8_0)
+{
+  typedef CRADLE_MPL_STRING(u8"") str;
+  static_assert(std::is_same<str, cradle::mpl::string<char> >::value, "");
+  typedef str::value_type value_type;
+  static_assert(std::is_same<value_type, std::array<char, 0> >::value, "");
+  constexpr value_type value = str::value;
+  static_assert(value.size() == 0u, "");
+  static_assert(value.empty(), "");
+  typedef str::type type;
+  static_assert(std::is_same<type, str>::value, "");
+}
+
+BOOST_AUTO_TEST_CASE(u8_3)
 {
   typedef CRADLE_MPL_STRING(u8"bar") str;
   static_assert(std::is_same<str, cradle::mpl::string<char, 'b', 'a', 'r'> >::value, "");
@@ -254,20 +272,7 @@ void testU8()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testU8Empty()
-{
-  typedef CRADLE_MPL_STRING(u8"") str;
-  static_assert(std::is_same<str, cradle::mpl::string<char> >::value, "");
-  typedef str::value_type value_type;
-  static_assert(std::is_same<value_type, std::array<char, 0> >::value, "");
-  constexpr value_type value = str::value;
-  static_assert(value.size() == 0u, "");
-  static_assert(value.empty(), "");
-  typedef str::type type;
-  static_assert(std::is_same<type, str>::value, "");
-}
-
-void testU8Limit()
+BOOST_AUTO_TEST_CASE(u8_limit)
 {
   typedef CRADLE_MPL_STRING(u8"abcdefghiaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabcdefghi") str;
   typedef str::value_type value_type;
@@ -297,7 +302,20 @@ void testU8Limit()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testU16()
+BOOST_AUTO_TEST_CASE(u16_0)
+{
+  typedef CRADLE_MPL_STRING(u"") str;
+  static_assert(std::is_same<str, cradle::mpl::string<char16_t> >::value, "");
+  typedef str::value_type value_type;
+  static_assert(std::is_same<value_type, std::array<char16_t, 0> >::value, "");
+  constexpr value_type value = str::value;
+  static_assert(value.size() == 0u, "");
+  static_assert(value.empty(), "");
+  typedef str::type type;
+  static_assert(std::is_same<type, str>::value, "");
+}
+
+BOOST_AUTO_TEST_CASE(u16_3)
 {
   typedef CRADLE_MPL_STRING(u"bar") str;
   static_assert(std::is_same<str, cradle::mpl::string<char16_t, u'b', u'a', u'r'> >::value, "");
@@ -313,20 +331,7 @@ void testU16()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testU16Empty()
-{
-  typedef CRADLE_MPL_STRING(u"") str;
-  static_assert(std::is_same<str, cradle::mpl::string<char16_t> >::value, "");
-  typedef str::value_type value_type;
-  static_assert(std::is_same<value_type, std::array<char16_t, 0> >::value, "");
-  constexpr value_type value = str::value;
-  static_assert(value.size() == 0u, "");
-  static_assert(value.empty(), "");
-  typedef str::type type;
-  static_assert(std::is_same<type, str>::value, "");
-}
-
-void testU16Limit()
+BOOST_AUTO_TEST_CASE(u16_limit)
 {
   typedef CRADLE_MPL_STRING(u"abcdefghiaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabcdefghi") str;
   typedef str::value_type value_type;
@@ -356,7 +361,20 @@ void testU16Limit()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testU32()
+BOOST_AUTO_TEST_CASE(u32_0)
+{
+  typedef CRADLE_MPL_STRING(U"") str;
+  static_assert(std::is_same<str, cradle::mpl::string<char32_t> >::value, "");
+  typedef str::value_type value_type;
+  static_assert(std::is_same<value_type, std::array<char32_t, 0> >::value, "");
+  constexpr value_type value = str::value;
+  static_assert(value.size() == 0u, "");
+  static_assert(value.empty(), "");
+  typedef str::type type;
+  static_assert(std::is_same<type, str>::value, "");
+}
+
+BOOST_AUTO_TEST_CASE(u32_3)
 {
   typedef CRADLE_MPL_STRING(U"bar") str;
   static_assert(std::is_same<str, cradle::mpl::string<char32_t, U'b', U'a', U'r'> >::value, "");
@@ -372,20 +390,7 @@ void testU32()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testU32Empty()
-{
-  typedef CRADLE_MPL_STRING(U"") str;
-  static_assert(std::is_same<str, cradle::mpl::string<char32_t> >::value, "");
-  typedef str::value_type value_type;
-  static_assert(std::is_same<value_type, std::array<char32_t, 0> >::value, "");
-  constexpr value_type value = str::value;
-  static_assert(value.size() == 0u, "");
-  static_assert(value.empty(), "");
-  typedef str::type type;
-  static_assert(std::is_same<type, str>::value, "");
-}
-
-void testU32Limit()
+BOOST_AUTO_TEST_CASE(u32_limit)
 {
   typedef CRADLE_MPL_STRING(U"abcdefghiaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabcdefghi") str;
   typedef str::value_type value_type;
@@ -415,7 +420,20 @@ void testU32Limit()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testWide()
+BOOST_AUTO_TEST_CASE(wide_0)
+{
+  typedef CRADLE_MPL_STRING(L"") str;
+  static_assert(std::is_same<str, cradle::mpl::string<wchar_t> >::value, "");
+  typedef str::value_type value_type;
+  static_assert(std::is_same<value_type, std::array<wchar_t, 0> >::value, "");
+  constexpr value_type value = str::value;
+  static_assert(value.size() == 0u, "");
+  static_assert(value.empty(), "");
+  typedef str::type type;
+  static_assert(std::is_same<type, str>::value, "");
+}
+
+BOOST_AUTO_TEST_CASE(wide_3)
 {
   typedef CRADLE_MPL_STRING(L"bar") str;
   static_assert(std::is_same<str, cradle::mpl::string<wchar_t, L'b', L'a', L'r'> >::value, "");
@@ -431,20 +449,7 @@ void testWide()
   static_assert(std::is_same<type, str>::value, "");
 }
 
-void testWideEmpty()
-{
-  typedef CRADLE_MPL_STRING(L"") str;
-  static_assert(std::is_same<str, cradle::mpl::string<wchar_t> >::value, "");
-  typedef str::value_type value_type;
-  static_assert(std::is_same<value_type, std::array<wchar_t, 0> >::value, "");
-  constexpr value_type value = str::value;
-  static_assert(value.size() == 0u, "");
-  static_assert(value.empty(), "");
-  typedef str::type type;
-  static_assert(std::is_same<type, str>::value, "");
-}
-
-void testWideLimit()
+BOOST_AUTO_TEST_CASE(wide_limit)
 {
   typedef CRADLE_MPL_STRING(L"abcdefghiaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabcdefghi") str;
   typedef str::value_type value_type;
@@ -473,3 +478,7 @@ void testWideLimit()
   typedef str::type type;
   static_assert(std::is_same<type, str>::value, "");
 }
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE_END()
