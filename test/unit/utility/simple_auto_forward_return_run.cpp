@@ -1,8 +1,12 @@
-#define BOOST_TEST_MAIN
 #include <cradle/utility/simple_auto_forward_return.hpp>
 
 #include <cradle/utility/as_const.hpp>
 #include <boost/test/unit_test.hpp>
+
+
+BOOST_AUTO_TEST_SUITE(utility)
+
+BOOST_AUTO_TEST_SUITE(simple_auto_forward_return)
 
 namespace{
 
@@ -11,7 +15,7 @@ int gi = 42;
 auto variable()
 CRADLE_SIMPLE_AUTO_FORWARD_RETURN(gi)
 
-}
+} // namespace `unnamed'
 
 #define ASSERT_SAME(EXPRESSION, TYPE_ID)                               \
 static_assert(std::is_same<decltype(EXPRESSION), TYPE_ID >::value, "") \
@@ -124,3 +128,7 @@ BOOST_AUTO_TEST_CASE(testForward)
     BOOST_CHECK_EQUAL(&static_cast<int const &>(forward(std::move(i))), &i);
   }
 }
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE_END()

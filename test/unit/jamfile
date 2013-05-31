@@ -28,12 +28,7 @@ obj master.obj
   ;
 explicit master.obj ;
 exe master.exe
-  : #"$(.direct-subdirs)//objs"
-    exception//objs
-    functional//objs
-    mpl//objs
-    scope_guard//objs
-    type_traits//objs
+  : "$(.direct-subdirs)//objs"
     master.obj
   : $(CRADLE_LINK_PROPERTIES)
   ;
