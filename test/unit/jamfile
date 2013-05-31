@@ -32,6 +32,7 @@ exe master.exe
     exception//objs
     functional//objs
     mpl//objs
+    scope_guard//objs
     master.obj
   : $(CRADLE_LINK_PROPERTIES)
   ;

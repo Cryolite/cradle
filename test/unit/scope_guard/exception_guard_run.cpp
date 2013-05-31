@@ -2,12 +2,16 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#define BOOST_TEST_MAIN
 #include <cradle/scope_guard/exception_guard.hpp>
+
 #include <boost/test/unit_test.hpp>
 
 
-BOOST_AUTO_TEST_CASE(testNormalScopeExit)
+BOOST_AUTO_TEST_SUITE(scope_guard)
+
+BOOST_AUTO_TEST_SUITE(exception_guard)
+
+BOOST_AUTO_TEST_CASE(normal_scope_exit)
 {
   int i = 1;
   {
@@ -19,7 +23,7 @@ BOOST_AUTO_TEST_CASE(testNormalScopeExit)
   BOOST_CHECK_EQUAL(i, 1);
 }
 
-BOOST_AUTO_TEST_CASE(testExceptionalScopeExit)
+BOOST_AUTO_TEST_CASE(exceptional_scope_exit)
 {
   int i = 1;
   try {
@@ -65,7 +69,7 @@ struct S
 
 } // namespace `unnmaed'
 
-BOOST_AUTO_TEST_CASE(testUnwind)
+BOOST_AUTO_TEST_CASE(unwind)
 {
   int i = 1;
   {
@@ -89,3 +93,7 @@ BOOST_AUTO_TEST_CASE(testUnwind)
   }
   BOOST_CHECK_EQUAL(i, 0);
 }
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE_END()
