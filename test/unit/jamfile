@@ -33,6 +33,7 @@ exe master.exe
     functional//objs
     mpl//objs
     scope_guard//objs
+    type_traits//objs
     master.obj
   : $(CRADLE_LINK_PROPERTIES)
   ;
