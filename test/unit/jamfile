@@ -20,8 +20,10 @@ for local i in [ path.glob "$(.here)" : * ] {
   }
 }
 
+# LCOV requires source file names passed to GCC command-line are absolute
+# ones.
 obj master.obj
-  : master.cpp
+  : "$(.here)/master.cpp"
   : $(CRADLE_COMPILE_PROPERTIES)
   ;
 explicit master.obj ;
@@ -29,6 +31,7 @@ exe master.exe
   : #"$(.direct-subdirs)//objs"
     exception//objs
     functional//objs
+    mpl//objs
     master.obj
   : $(CRADLE_LINK_PROPERTIES)
   ;
