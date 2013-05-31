@@ -46,7 +46,8 @@ for local i in [ path.glob "$(.here)" : "*_run.cpp" ] {
     ;
   explicit "$(i:B).exe" ;
   run "$(i:B).exe"
-    : # No arg
+    : # Arguments for Boost.Test are supplied by `CRADLE_RUN_PROPERTIES`
+      # hook.
     : # No input-file
     : $(CRADLE_RUN_PROPERTIES)
     : "$(i:B)"

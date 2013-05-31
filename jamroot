@@ -43,6 +43,24 @@ feature.compose <cradle-coverage>on
     <linkflags>--coverage
   ;
 
+feature.feature cradle-xunit-log-format
+  : hrf xml
+  : propagated incidental
+  ;
+feature.feature cradle-xunit-log-format-run
+  : hrf xml
+  ;
+constant CRADLE_XUNIT_LOG_FORMAT_RUN_PROPERTIES
+  : <cradle-xunit-log-format>hrf:<cradle-xunit-log-format-run>hrf
+    <cradle-xunit-log-format-run>hrf:<testing.arg>--show_progress=yes
+    <cradle-xunit-log-format-run>hrf:<testing.arg>--xunit-log-format=hrf
+    <cradle-xunit-log-format>xml:<cradle-xunit-log-format-run>xml
+    <cradle-xunit-log-format-run>xml:<testing.arg>--build_info=yes
+    <cradle-xunit-log-format-run>xml:<testing.arg>--output_format=XML
+    <cradle-xunit-log-format-run>xml:<testing.arg>--log_level=all
+    <cradle-xunit-log-format-run>xml:<testing.arg>--report_level=no
+    <cradle-xunit-log-format-run>xml:<testing.arg>--xunit-log-format=xml
+  ;
 
 if "$(CRADLE_WITH_INTRO)" = "yes" {
   project cradle
@@ -58,9 +76,16 @@ if "$(CRADLE_WITH_INTRO)" = "yes" {
       <linkflags>"-Wl,--no-allow-shlib-undefined"
     : build-dir bin
     ;
-  constant CRADLE_COMPILE_PROPERTIES : $(INTRO_COMPILE_PROPERTIES) ;
-  constant CRADLE_LINK_PROPERTIES : $(INTRO_LINK_PROPERTIES) ;
-  constant CRADLE_RUN_PROPERTIES : $(INTRO_RUN_PROPERTIES) ;
+  constant CRADLE_COMPILE_PROPERTIES
+    : $(INTRO_COMPILE_PROPERTIES)
+    ;
+  constant CRADLE_LINK_PROPERTIES
+    : $(INTRO_LINK_PROPERTIES)
+    ;
+  constant CRADLE_RUN_PROPERTIES
+    : $(INTRO_RUN_PROPERTIES)
+      $(CRADLE_XUNIT_LOG_FORMAT_RUN_PROPERTIES)
+    ;
 }
 else {
   project cradle
@@ -80,7 +105,9 @@ else {
     ;
   #constant CRADLE_COMPILE_PROPERTIES : ;
   #constant CRADLE_LINK_PROPERTIES : ;
-  #constant CRADLE_RUN_PROPERTIES : ;
+  constant CRADLE_RUN_PROPERTIES
+    : $(CRADLE_XUNIT_LOG_FORMAT_RUN_PROPERTIES)
+    ;
 }
 
 
