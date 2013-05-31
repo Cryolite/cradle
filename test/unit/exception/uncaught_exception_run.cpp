@@ -20,10 +20,13 @@ public:
   GlobalFixture()
     : p_log_stream_()
   {
-    std::size_t const argc = boost::unit_test::framework::master_test_suite().argc;
-    char const * const * const argv = boost::unit_test::framework::master_test_suite().argv;
+    std::size_t const argc
+      = boost::unit_test::framework::master_test_suite().argc;
+    char const * const * const argv
+      = boost::unit_test::framework::master_test_suite().argv;
     if (argc != 2u) {
-      throw std::runtime_error("");
+      throw std::runtime_error(
+        "an invalid number of arguments passed to the unit test module");
     }
     if (argv[1u] == std::string("--xunit-log-format=hrf")) {
       // Do nothing.
