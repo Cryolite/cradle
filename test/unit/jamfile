@@ -6,6 +6,9 @@ project cradle/test/unit
 
 import path ;
 import regex ;
+if "$(CRADLE_WITH_INTRO)" = yes {
+  import site-config ;
+}
 
 local .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
 .here = [ path.make "$(.here)" ] ;
@@ -16,6 +19,27 @@ for local i in [ path.glob "$(.here)" : * ] {
     .direct-subdirs += "$(i:B)" ;
   }
 }
+
+# LCOV requires source file names passed to GCC command-line are absolute
+# ones.
+obj master.obj
+  : "$(.here)/master.cpp"
+  : $(CRADLE_COMPILE_PROPERTIES)
+  ;
+explicit master.obj ;
+exe master.exe
+  : "$(.direct-subdirs)//objs"
+    master.obj
+  : $(CRADLE_LINK_PROPERTIES)
+  ;
+explicit master.exe ;
+run master.exe
+  : # Arguments for Boost.Test are supplied by `CRADLE_RUN_PROPERTIES` hook.
+  : # No input-file
+  : $(CRADLE_RUN_PROPERTIES)
+  : master.run
+  ;
+explicit master.run ;
 
 # `bjam` will introduce dependency on a path (say, `XXXXX`) into source
 # files that have header inclusions `#include <XXXXX>` or `#include "XXXXX"`
@@ -35,6 +59,6 @@ for local i in [ path.glob "$(.here)" : * ] {
 # obfuscated name inhibits users from invoking `bjam` with the current
 # directory being this directory.
 alias do_not_invoke_this_target_directly
-  : "$(.direct-subdirs)//check"
+  : master.run "$(.direct-subdirs)//check"
   ;
 explicit do_not_invoke_this_target_directly ;

@@ -1,12 +1,15 @@
-#define BOOST_TEST_MAIN
 #include <cradle/functional/invoke.hpp>
 
-#include <cradle/config/config.hpp>
 #include <cradle/utility/as_const.hpp>
+#include <cradle/config/config.hpp>
 #include <boost/test/unit_test.hpp>
-#include <utility>
-#include <type_traits>
 #include <memory>
+#include <type_traits>
+#include <utility>
+
+BOOST_AUTO_TEST_SUITE(functional)
+
+BOOST_AUTO_TEST_SUITE(invoke)
 
 namespace {
 
@@ -121,7 +124,7 @@ constexpr bool test_explicit(bool) noexcept
   return false;
 }
 
-BOOST_AUTO_TEST_CASE(testNullaryMemberFunction)
+BOOST_AUTO_TEST_CASE(nullary_member_function)
 {
   S s;
 
@@ -190,7 +193,7 @@ BOOST_AUTO_TEST_CASE(testNullaryMemberFunction)
   static_assert(!test_explicit<int &&, void (S::*)(), S &>(0), "");
 }
 
-BOOST_AUTO_TEST_CASE(testNullaryConstMemberFunction)
+BOOST_AUTO_TEST_CASE(nullary_const_member_function)
 {
   S s;
 
@@ -275,7 +278,7 @@ BOOST_AUTO_TEST_CASE(testNullaryConstMemberFunction)
   static_assert(!test_explicit<int, void (S::*)() const, S &>(0), "");
 }
 
-BOOST_AUTO_TEST_CASE(testNullaryNothrowMemberFunction)
+BOOST_AUTO_TEST_CASE(nullary_nothrow_member_function)
 {
   S s;
 
@@ -359,7 +362,7 @@ BOOST_AUTO_TEST_CASE(testNullaryNothrowMemberFunction)
   static_assert(!test_explicit<int &&, void (S::*)() noexcept, S &>(0), "");
 }
 
-BOOST_AUTO_TEST_CASE(testNothrowConstMemberFunction)
+BOOST_AUTO_TEST_CASE(nothrow_const_member_function)
 {
   S s;
 
@@ -464,7 +467,7 @@ BOOST_AUTO_TEST_CASE(testNothrowConstMemberFunction)
   static_assert(!test_explicit<int &&, void (S::*)() const noexcept, S &>(0), "");
 }
 
-BOOST_AUTO_TEST_CASE(testNullaryMemberFunctionReturningPrvaue)
+BOOST_AUTO_TEST_CASE(nullary_member_function_returning_prvaue)
 {
   S s;
 
@@ -551,7 +554,7 @@ BOOST_AUTO_TEST_CASE(testNullaryMemberFunctionReturningPrvaue)
   static_assert(!test_explicit<int &&, int (S::*)(), S * &>(0), "");
 }
 
-BOOST_AUTO_TEST_CASE(testNullaryMemberFunctionReturningLvalue)
+BOOST_AUTO_TEST_CASE(nullary_member_function_returning_lvalue)
 {
   S s;
 
@@ -640,7 +643,7 @@ BOOST_AUTO_TEST_CASE(testNullaryMemberFunctionReturningLvalue)
   static_assert(!test_explicit<int &&, int &(S::*)(), int * &>(0), "");
 }
 
-BOOST_AUTO_TEST_CASE(testNullaryMemberFunctionReturningConstLvalue)
+BOOST_AUTO_TEST_CASE(nullary_member_function_returning_const_lvalue)
 {
   S s;
 
@@ -725,7 +728,7 @@ BOOST_AUTO_TEST_CASE(testNullaryMemberFunctionReturningConstLvalue)
   cradle::invoke<void const>(&S::mf0cl, &s);
 }
 
-BOOST_AUTO_TEST_CASE(testNullaryMemberFunctionReturningXvalue)
+BOOST_AUTO_TEST_CASE(nullary_member_function_returning_xvalue)
 {
   S s;
 
@@ -814,7 +817,7 @@ BOOST_AUTO_TEST_CASE(testNullaryMemberFunctionReturningXvalue)
   cradle::invoke<void const>(&S::mf0x, &s);
 }
 
-BOOST_AUTO_TEST_CASE(testUnaryMemberFunctionWithPrvalue)
+BOOST_AUTO_TEST_CASE(unary_member_function_with_prvalue)
 {
   S s;
 
@@ -889,7 +892,7 @@ BOOST_AUTO_TEST_CASE(testUnaryMemberFunctionWithPrvalue)
   static_assert(!test_explicit<int &&, void (S::*)(int), S &, int>(0), "");
 }
 
-BOOST_AUTO_TEST_CASE(testUnaryMemberFunctionWithLvalue)
+BOOST_AUTO_TEST_CASE(unary_member_function_with_lvalue)
 {
   S s;
 
@@ -956,7 +959,7 @@ BOOST_AUTO_TEST_CASE(testUnaryMemberFunctionWithLvalue)
   static_assert(!test_explicit<int &&, void (S::*)(int &), S &, int &>(0), "");
 }
 
-BOOST_AUTO_TEST_CASE(testUnaryMemberFunctionWithConstLvalue)
+BOOST_AUTO_TEST_CASE(unary_member_function_with_const_lvalue)
 {
   S s;
 
@@ -1027,7 +1030,7 @@ BOOST_AUTO_TEST_CASE(testUnaryMemberFunctionWithConstLvalue)
   static_assert(!test_explicit<int &&, void (S::*)(int const &), S &, int &>(0), "");
 }
 
-BOOST_AUTO_TEST_CASE(testUnaryMemberFunctionWithXvalue)
+BOOST_AUTO_TEST_CASE(unary_member_function_with_xvalue)
 {
   S s;
 
@@ -1094,7 +1097,7 @@ BOOST_AUTO_TEST_CASE(testUnaryMemberFunctionWithXvalue)
   static_assert(!test_explicit<int &&, void (S::*)(int &&), S &, int>(0), "");
 }
 
-BOOST_AUTO_TEST_CASE(testMemberVariable)
+BOOST_AUTO_TEST_CASE(member_variable)
 {
   S s;
 
@@ -1193,7 +1196,7 @@ BOOST_AUTO_TEST_CASE(testMemberVariable)
   cradle::invoke<void const>(&S::mv, &s);
 }
 
-BOOST_AUTO_TEST_CASE(testConstMemberVariable)
+BOOST_AUTO_TEST_CASE(const_member_variable)
 {
   S s;
 
@@ -1312,7 +1315,7 @@ int &&ntx() noexcept
 
 } // namespace `unnamed'
 
-BOOST_AUTO_TEST_CASE(testNullaryFunction)
+BOOST_AUTO_TEST_CASE(nullary_function)
 {
   ASSERT_SAME(cradle::invoke(&ntp), int);
   static_assert(noexcept(cradle::invoke(&ntp)), "");
@@ -1440,7 +1443,7 @@ void nt1rr(std::unique_ptr<int> &&) noexcept
 
 }
 
-BOOST_AUTO_TEST_CASE(testUnaryFunctionMoveOnly)
+BOOST_AUTO_TEST_CASE(unary_function_move_only)
 {
   std::unique_ptr<int> p;
 
@@ -1502,3 +1505,7 @@ BOOST_AUTO_TEST_CASE(testUnaryFunctionMoveOnly)
   static_assert(
     !test<void (*)(std::unique_ptr<int> &&) noexcept, std::unique_ptr<int> const &>(0), "");
 }
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE_END()

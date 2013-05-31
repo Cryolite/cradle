@@ -6,24 +6,37 @@ project cradle/test/unit/scope_guard
 
 import path ;
 import regex ;
-
-if "$(CRADLE_WITH_INTRO)" = "yes" {
+if "$(CRADLE_WITH_INTRO)" = yes {
   import site-config ;
 }
 
 local .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
 .here = [ path.make "$(.here)" ] ;
 
-local .tests ;
-
-for local i in [ path.glob "$(.here)" : "*_compile.cpp" ] {
-  compile "$(i)"
-    : $(CRADLE_COMPILE_PROPERTIES)
-    : "$(i:B)"
-    ;
-  explicit "$(i:B)" ;
-  .tests += "$(i:B)" ;
+local .direct-subdirs ;
+for local i in [ path.glob "$(.here)" : * ] {
+  if [ path.exists "$(i)/jamfile" ] {
+    .direct-subdirs += "$(i:B)" ;
+  }
 }
+
+local .objs ;
+
+for local i in [ path.glob "$(.here)" : "*_run.cpp" ] {
+  obj "$(i:B).obj"
+    : "$(i)"
+    : $(CRADLE_COMPILE_PROPERTIES)
+    ;
+  explicit "$(i:B).obj" ;
+  .objs += "$(i:B).obj" ;
+}
+
+alias objs
+  : "$(.direct-subdirs)//objs"
+    "$(.objs)"
+  ;
+
+local .tests ;
 
 for local i in [ path.glob "$(.here)" : "*_compile_fail.cpp" ] {
   compile-fail "$(i)"
@@ -32,55 +45,6 @@ for local i in [ path.glob "$(.here)" : "*_compile_fail.cpp" ] {
     ;
   explicit "$(i:B)" ;
   .tests += "$(i:B)" ;
-}
-
-for local i in [ path.glob "$(.here)" : "*_run.cpp" ] {
-  obj "$(i:B).obj"
-    : "$(i)"
-    : $(CRADLE_COMPILE_PROPERTIES)
-    ;
-  explicit "$(i:B).obj" ;
-  exe "$(i:B).exe"
-    : "$(i:B).obj"
-    : $(CRADLE_LINK_PROPERTIES)
-    ;
-  explicit "$(i:B).exe" ;
-  run "$(i:B).exe"
-    : # No arg
-    : # No input-file
-    : $(CRADLE_RUN_PROPERTIES)
-    : "$(i:B)"
-    ;
-  explicit "$(i:B)" ;
-  .tests += "$(i:B)" ;
-}
-
-for local i in [ path.glob "$(.here)" : "*_run_fail.cpp" ] {
-  obj "$(i:B).obj"
-    : "$(i)"
-    : $(CRADLE_COMPILE_PROPERTIES)
-    ;
-  explicit "$(i:B).obj" ;
-  exe "$(i:B).exe"
-    : "$(i:B).obj"
-    : $(CRADLE_LINK_PROPERTIES)
-    ;
-  explicit "$(i:B).exe" ;
-  run-fail "$(i:B).exe"
-    : # No arg
-    : # No input-file
-    : $(CRADLE_RUN_PROPERTIES)
-    : "$(i:B)"
-    ;
-  explicit "$(i:B)" ;
-  .tests += "$(i:B)" ;
-}
-
-local .direct-subdirs ;
-for local i in [ path.glob "$(.here)" : * ] {
-  if [ path.exists "$(i)/jamfile" ] {
-    .direct-subdirs += "$(i:B)" ;
-  }
 }
 
 alias check
