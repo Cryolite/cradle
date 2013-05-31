@@ -62,16 +62,16 @@ constant CRADLE_XUNIT_LOG_FORMAT_RUN_PROPERTIES
     <cradle-xunit-log-format-run>xml:<testing.arg>--xunit-log-format=xml
   ;
 
-if "$(CRADLE_WITH_INTRO)" = "yes" {
+if "$(CRADLE_WITH_INTRO)" = yes {
   project cradle
     : requirements
       <std>c++11
+      <runtime-link>shared
       <threading>single:<define>CRADLE_SINGLE_THREADING
       <threading>multi:<define>CRADLE_MULTI_THREADING
       <include>.
       <warnings>all
       <c++-template-depth>1024
-      <runtime-link>shared
       <hardcode-dll-paths>false
       <linkflags>"-Wl,--no-allow-shlib-undefined"
     : build-dir bin
@@ -93,12 +93,12 @@ else {
       <toolset>gcc:<cxxflags>-std=c++0x
       <toolset>clang:<cxxflags>-std=c++11
       <toolset>intel:<cxxflags>-std=c++11
+      <runtime-link>shared
       <threading>single:<define>CRADLE_SINGLE_THREADING
       <threading>multi:<define>CRADLE_MULTI_THREADING
       <include>.
       <warnings>all
       <c++-template-depth>1024
-      <runtime-link>shared
       <hardcode-dll-paths>false
       <linkflags>"-Wl,--no-allow-shlib-undefined"
     : build-dir bin
@@ -121,8 +121,3 @@ use-project /cradle/src/utility : src/utility ;
 use-project /cradle/src/exception : src/exception ;
 use-project /cradle/src/functional : src/functional ;
 use-project /cradle/src/scope_guard : src/scope_guard ;
-
-alias check
-  : test/unit//check
-  ;
-explicit check ;
