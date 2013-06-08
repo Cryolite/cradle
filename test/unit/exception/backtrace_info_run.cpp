@@ -18,7 +18,7 @@ namespace{
 
 void f()
 {
-  throw boost::enable_error_info(std::runtime_error(""))
+  throw boost::enable_error_info(std::runtime_error("foo"))
     << cradle::throw_backtrace();
 }
 
@@ -30,7 +30,8 @@ BOOST_AUTO_TEST_CASE(main)
   try {
     f();
   }
-  catch (boost::exception const &e) {
+  catch (std::exception const &e) {
+    BOOST_CHECK_EQUAL(e.what(), "foo");
     cradle::backtrace const *p
       = boost::get_error_info<cradle::backtrace_info>(e);
     BOOST_REQUIRE(p != nullptr);
