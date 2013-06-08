@@ -26,6 +26,7 @@ void f()
 
 BOOST_AUTO_TEST_CASE(main)
 {
+  int i = 0;
   try {
     f();
   }
@@ -34,7 +35,9 @@ BOOST_AUTO_TEST_CASE(main)
       = boost::get_error_info<cradle::backtrace_info>(e);
     BOOST_REQUIRE(p != nullptr);
     BOOST_CHECK_GT(p->end() - p->begin(), 0);
+    i = 42;
   }
+  BOOST_CHECK_EQUAL(i, 42);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
