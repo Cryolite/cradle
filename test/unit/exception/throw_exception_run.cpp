@@ -17,7 +17,7 @@ namespace{
 
 void f()
 {
-  CRADLE_THROW_EXCEPTION(std::runtime_error(""));
+  CRADLE_THROW_EXCEPTION(std::runtime_error("foo"));
 }
 
 } // namespace `unnnamed'
@@ -28,7 +28,9 @@ BOOST_AUTO_TEST_CASE(main)
   try {
     f();
   }
-  catch (boost::exception const &e) {
+  catch (std::exception const &e) {
+    BOOST_CHECK(dynamic_cast<boost::exception const *>(&e));
+    BOOST_CHECK_EQUAL(e.what(), "foo");
     {
       char const * const *p = boost::get_error_info<boost::throw_function>(e);
       BOOST_CHECK(p != nullptr);
