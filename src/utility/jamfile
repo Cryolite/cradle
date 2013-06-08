@@ -1,4 +1,7 @@
 project cradle/src/utility
+  : requirements
+    <source>/cradle/src/exception//compile
+    <library>/cradle/src/exception//link
   ;
 
 import path ;
