@@ -1,6 +1,8 @@
 project cradle/src/exception
   : requirements
     [ check-target-builds /cradle/ext/libstdcxx//uncaught_exceptions.run : <define>CRADLE_HAS_LIBSTDCXX_UNCAUGHT_EXCEPTIONS ]
+    <source>/cradle/ext/boost//exception_compile
+    <library>/cradle/ext/boost//exception_link
   ;
 
 import path ;
