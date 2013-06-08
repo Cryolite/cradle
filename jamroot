@@ -52,7 +52,6 @@ feature.feature cradle-xunit-log-format-run
   ;
 constant CRADLE_XUNIT_LOG_FORMAT_RUN_PROPERTIES
   : <cradle-xunit-log-format>hrf:<cradle-xunit-log-format-run>hrf
-    <cradle-xunit-log-format-run>hrf:<testing.arg>--show_progress=yes
     <cradle-xunit-log-format-run>hrf:<testing.arg>--xunit-log-format=hrf
     <cradle-xunit-log-format>xml:<cradle-xunit-log-format-run>xml
     <cradle-xunit-log-format-run>xml:<testing.arg>--build_info=yes
