@@ -1,3 +1,7 @@
+# (C) Copyright Cryolite 2013. Distributed under the Boost
+# Software License, Version 1.0. (See accompanying file
+# LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
 path-constant CRADLE_ROOT : . ;
 
 import feature ;
@@ -116,7 +120,8 @@ use-project /cradle/ext/boost : ext/boost ;
 use-project /cradle/src : src ;
 use-project /cradle/src/mpl : src/mpl ;
 use-project /cradle/src/type_traits : src/type_traits ;
-use-project /cradle/src/utility : src/utility ;
 use-project /cradle/src/exception : src/exception ;
+use-project /cradle/src/utility : src/utility ;
+use-project /cradle/src/memory : src/memory ;
 use-project /cradle/src/functional : src/functional ;
 use-project /cradle/src/scope_guard : src/scope_guard ;
