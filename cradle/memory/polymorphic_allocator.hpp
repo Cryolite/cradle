@@ -5,12 +5,12 @@
 #if !defined(CRADLE_MEMORY_POLYMORPHIC_ALLOCATOR_HPP_INCLUDE_GUARD)
 #define CRADLE_MEMORY_POLYMORPHIC_ALLOCATOR_HPP_INCLUDE_GUARD
 
-#include <cradle/utility/assert_precondition.hpp>
+#include <cradle/memory/memory_resource_adaptor.hpp>
+#include <cradle/memory/memory_resource.hpp>
 #include <cradle/exception/throw_with_nested.hpp>
-#include <cradle/exception/throw_exception.hpp>
 #include <cradle/type_traits/enable_if_same.hpp>
 #include <cradle/type_traits/enable_if_reference.hpp>
-#include <boost/detail/workaround.hpp>
+#include <cradle/type_traits/enable_if_volatile.hpp>
 #include <type_traits>
 #include <memory>
 #include <utility>
@@ -21,203 +21,43 @@
 
 namespace cradle{
 
-class memory_resource
-{
-public:
-  memory_resource();
-
-  memory_resource(memory_resource const &) = delete;
-
-  virtual ~memory_resource();
-
-  memory_resource &operator=(memory_resource const &) = delete;
-
-  void *allocate(std::size_t n, std::size_t alignment);
-
-  void deallocate(void *p, std::size_t n, std::size_t alignment) noexcept;
-
-  std::size_t max_size() const noexcept;
-
-  bool is_equal_to(memory_resource const &x) const noexcept;
-
-  std::shared_ptr<memory_resource> share_inner_memory_resource();
-
-private:
-  virtual void *do_allocate(std::size_t n, std::size_t alignment) = 0;
-
-  virtual void do_deallocate(
-    void *p, std::size_t n, std::size_t alignment) noexcept = 0;
-
-  virtual std::size_t do_max_size() const noexcept = 0;
-
-  virtual bool do_is_equal_to(memory_resource const &x) const noexcept = 0;
-
-  virtual std::shared_ptr<memory_resource>
-  do_share_inner_memory_resource() = 0;
-}; // class memory_resource
-
-
-namespace detail_{
-
-template<typename AlignedAllocator>
-class memory_resource_adaptor_impl_ final
-  : public memory_resource
-{
-private:
-#if BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
-  // A workaround for http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56019
-  typedef ::max_align_t max_align_type_;
-#else // BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
-  typedef std::max_align_t max_align_type_
-#endif // BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
-
-private:
-  typedef AlignedAllocator aligned_allocator_type_;
-  typedef std::allocator_traits<aligned_allocator_type_> traits_type_;
-  static_assert(
-    std::is_same<
-      typename traits_type_::value_type, max_align_type_>::value,
-    "");
-  static_assert(
-    std::is_same<typename traits_type_::pointer, max_align_type_ *>::value,
-    "");
-  static_assert(
-    std::is_same<
-      typename traits_type_::const_pointer,
-      max_align_type_ const *>::value,
-    "");
-  static_assert(
-    std::is_same<typename traits_type_::void_pointer, void *>::value, "");
-  static_assert(
-    std::is_same<
-      typename traits_type_::const_void_pointer, void const *>::value,
-    "");
-  static_assert(
-    std::is_same<
-      typename traits_type_::difference_type, std::ptrdiff_t>::value,
-    "");
-  static_assert(
-    std::is_same<typename traits_type_::size_type, std::size_t>::value,
-    "");
-
-public:
-  memory_resource_adaptor_impl_()
-  noexcept(
-    std::is_nothrow_default_constructible<aligned_allocator_type_>::value)
-    : a_()
-  {}
-
-  template<
-    typename Allocator,
-    typename = cradle::enable_if_same<
-      typename std::allocator_traits<Allocator>
-        ::template rebind_alloc<max_align_type_>,
-      aligned_allocator_type_> >
-  explicit memory_resource_adaptor_impl_(Allocator const &a)
-  noexcept(
-    std::is_nothrow_copy_constructible<aligned_allocator_type_>::value)
-    : a_(a)
-  {}
-
-  template<
-    typename Allocator,
-    typename = cradle::enable_if_same<
-      typename std::allocator_traits<Allocator>
-        ::template rebind_alloc<max_align_type_>,
-      aligned_allocator_type_> >
-  explicit memory_resource_adaptor_impl_(Allocator &&a)
-  noexcept(
-    std::is_nothrow_move_constructible<aligned_allocator_type_>::value)
-    : a_(std::move(a))
-  {}
-
-  memory_resource_adaptor_impl_(
-    memory_resource_adaptor_impl_ const &) = delete;
-
-  ~memory_resource_adaptor_impl_() override
-  {}
-
-  memory_resource_adaptor_impl_ &
-  operator=(memory_resource_adaptor_impl_ const &) = delete;
-
-private:
-  void *do_allocate(
-    std::size_t const n, std::size_t const alignment) override
-  {
-    CRADLE_ASSERT_PRECONDITION(n > 0u);
-    CRADLE_ASSERT_PRECONDITION(alignment > 0u);
-    max_align_type_ *p
-      = traits_type_::allocate(a_, (n - 1) / sizeof(max_align_type_) + 1);
-#if BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
-    // `std::align' is not implemented.
-#else // BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
-    {
-      max_align_type_ *q = p;
-      std::size_t space = n;
-      if (std::align(alignment, n, q, space) == nullptr) {
-        CRADLE_THROW_EXCEPTION(
-          std::bad_alloc("requested alignment could not be satisfied"));
-      }
-      if (q != p || space != n) {
-        CRADLE_THROW_EXCEPTION(
-          std::bad_alloc("requested alignment could not be satisfied"));
-      }
-    }
-#endif // BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
-    return static_cast<void *>(p);
-  }
-
-  void do_deallocate(
-    void *p, std::size_t n, std::size_t /*alignment*/) noexcept override
-  {
-    CRADLE_ASSERT_PRECONDITION(p != nullptr);
-    CRADLE_ASSERT_PRECONDITION(n > 0u);
-    traits_type_::deallocate(a_, static_cast<max_align_type_ *>(p), n);
-  }
-
-  std::size_t do_max_size() const noexcept override
-  {
-    return traits_type_::max_size(a_) * sizeof(max_align_type_);
-  }
-
-  bool do_is_equal_to(memory_resource const &x) const noexcept override
-  {
-    memory_resource_adaptor_impl_ const *p
-      = dynamic_cast<memory_resource_adaptor_impl_ const *>(&x);
-    return p != nullptr && a_ == p->a_;
-  }
-
-  std::shared_ptr<memory_resource> do_share_inner_memory_resource() override
-  {
-    return std::shared_ptr<memory_resource>(nullptr);
-  }
-
-private:
-  aligned_allocator_type_ a_;
-}; // class memory_resource_adaptor_impl_
-
-} // namespace detail_
-
-
-#if BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
-// A workaround for http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56019
-template<typename Allocator>
-using memory_resource_adaptor
-  = cradle::detail_::memory_resource_adaptor_impl_<
-      std::allocator_traits<Allocator>::rebind_alloc< ::max_align_t> >;
-#else // BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
-template<typename Allocator>
-using memory_resource_adaptor
-  = cradle::detail_::memory_resource_adaptor_impl_<
-      std::allocator_traits<Allocator>::rebind_alloc<std::max_align_t> >;
-#endif // BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
-
-
-std::shared_ptr<cradle::memory_resource> get_default_memory_resource();
+template<typename T>
+class polymorphic_allocator;
 
 
 template<typename T>
-class polymorphic_allocator;
+struct is_polymorphic_allocator
+  : std::false_type
+{};
+
+template<typename T>
+struct is_polymorphic_allocator<polymorphic_allocator<T> >
+  : std::true_type
+{};
+
+template<typename T>
+struct is_polymorphic_allocator<polymorphic_allocator<T> const>
+  : std::true_type
+{};
+
+template<typename T>
+struct is_polymorphic_allocator<polymorphic_allocator<T> volatile>
+  : std::true_type
+{};
+
+template<typename T>
+struct is_polymorphic_allocator<polymorphic_allocator<T> const volatile>
+  : std::true_type
+{};
+
+
+template<typename T, typename R = void>
+using enable_if_polymorphic_allocator
+  = typename std::enable_if<is_polymorphic_allocator<T>::value, R>::type;
+
+template<typename T, typename R = void>
+using disable_if_polymorphic_allocator
+  = typename std::enable_if<!is_polymorphic_allocator<T>::value, R>::type;
 
 
 template<typename T, typename U>
@@ -299,23 +139,42 @@ private:
   {}
 
 public:
-  template<typename Allocator>
+  template<typename U>
+  polymorphic_allocator(std::allocator<U> &a)
+    : p_(cradle::get_default_memory_resource())
+  {}
+
+  template<typename U>
+  polymorphic_allocator(std::allocator<U> const &a)
+    : p_(cradle::get_default_memory_resource())
+  {}
+
+  template<typename U>
+  polymorphic_allocator(std::allocator<U> &&a)
+    : p_(cradle::get_default_memory_resource())
+  {}
+
+  template<typename U>
+  polymorphic_allocator(std::allocator<U> const &&a)
+    : p_(cradle::get_default_memory_resource())
+  {}
+
+  template<typename Allocator,
+           typename = cradle::disable_if_volatile<Allocator> >
   polymorphic_allocator(Allocator const &a)
-    : p_(std::make_shared<memory_resource_adaptor<Allocator> >(a))
+    : p_(std::make_shared<cradle::memory_resource_adaptor<Allocator> >(a))
   {}
 
   template<
     typename Allocator,
+    typename = cradle::disable_if_volatile<Allocator>,
     typename = cradle::disable_if_reference<Allocator>,
-    typename = cradle::disable_if_same<Allocator, polymorphic_allocator>,
-    typename = cradle::disable_if_same<
-      Allocator, polymorphic_allocator const>,
-    typename = cradle::disable_if_same<
-      Allocator, std::shared_ptr<cradle::memory_resource> >,
+    typename = disable_if_polymorphic_allocator<Allocator>,
     typename = cradle::disable_if_same<
       Allocator, std::shared_ptr<cradle::memory_resource> const> >
   polymorphic_allocator(Allocator &&a)
-    : p_(std::make_shared<memory_resource_adaptor<Allocator> >(std::move(a)))
+    : p_(std::make_shared<
+           cradle::memory_resource_adaptor<Allocator> >(std::move(a)))
   {}
 
   polymorphic_allocator(polymorphic_allocator const &) = default;
@@ -337,7 +196,10 @@ public:
   T *allocate(std::size_t const n)
   {
     if (!p_) {
-      p_ = cradle::get_default_memory_resource();
+      typedef std::allocator<T> allocator_type;
+      typedef std::allocator_traits<allocator_type> traits_type;
+      allocator_type a;
+      return traits_type::allocate(a, n);
     }
     void * const p = p_->allocate(n * sizeof(T), alignof(T));
     return static_cast<T *>(p);
@@ -346,8 +208,9 @@ public:
   void deallocate(T * const p, std::size_t const n) noexcept
   {
     if (!p_) {
-      std::allocator<T> a;
-      typedef std::allocator_traits<std::allocator<T> > traits_type;
+      typedef std::allocator<T> allocator_type;
+      typedef std::allocator_traits<allocator_type> traits_type;
+      allocator_type a;
       traits_type::deallocate(a, p, n);
       return;
     }
@@ -357,8 +220,10 @@ public:
   std::size_t max_size() const noexcept
   {
     if (!p_) {
-      return std::allocator_traits<
-        std::allocator<T> >::max_size(std::allocator<T>());
+      typedef std::allocator<T> allocator_type;
+      typedef std::allocator_traits<allocator_type> traits_type;
+      allocator_type a;
+      return traits_type::max_size(a);
     }
     return p_->max_size() / sizeof(T);
   }
@@ -407,8 +272,9 @@ public:
     static_assert(!std::is_const<U>::value, "");
     static_assert(!std::is_volatile<U>::value, "");
     if (!p_) {
-      std::allocator<U> a;
-      typedef std::allocator_traits<std::allocator<U> > traits_type;
+      typedef std::allocator<T> allocator_type;
+      typedef std::allocator_traits<allocator_type> traits_type;
+      allocator_type a;
       traits_type::construct(a, p, std::forward<Args>(args)...);
       return;
     }
@@ -422,10 +288,18 @@ public:
   {
     static_assert(std::is_object<U>::value, "");
     static_assert(!std::is_volatile<U>::value, "");
+    if (!p_) {
+      typedef std::allocator<T> allocator_type;
+      typedef std::allocator_traits<allocator_type> traits_type;
+      allocator_type a;
+      traits_type::destroy(a, p);
+      return;
+    }
     p->~U();
   }
 
-  polymorphic_allocator select_on_container_copy_construction() const
+  polymorphic_allocator
+  select_on_container_copy_construction() const noexcept
   {
     return polymorphic_allocator();
   }
@@ -435,7 +309,8 @@ public:
     if (!p_) {
       return polymorphic_allocator();
     }
-    auto p = p_->share_inner_memory_resource();
+    std::shared_ptr<cradle::memory_resource> p
+      = p_->share_inner_memory_resource();
     return p ? polymorphic_allocator(std::move(p)) : *this;
   }
 
@@ -453,10 +328,25 @@ bool operator==(polymorphic_allocator<T> const &x,
                 polymorphic_allocator<U> const &y) noexcept
 {
   if (!x.p_) {
+    // `x` represents the default allocator (`std::allocator<T>`).
     if (!y.p_) {
+      // `y` also represents the default allocator, and the default
+      // allocator is stateless.
       return true;
     }
     try {
+      // When `y` represents the default allocator but its member variable
+      // `p_` is not NULL, it is guaranteed that `y.p_` is created by a call
+      // of `cradle::get_default_memory_resource` (see the overloads of the
+      // constructor of `cradle::polymorphic_allocator`). And it is
+      // guaranteed that only the first call of
+      // `cradle::get_default_memory_resource` might throw an exception, and
+      // the second and subsequent calls of it never exit via an exception.
+      // Thus, if the following call of
+      // `cradle::get_default_memory_resource` exists via an exception, then
+      // the call is the first one and `y.p_` is not created by
+      // `cradle::get_default_memory_resource`. Therefore, it can be
+      // concluded that `y` does not represent the default allocator.
       return y.p_ == cradle::get_default_memory_resource();
     }
     catch (std::bad_alloc const &) {
