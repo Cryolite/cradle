@@ -269,6 +269,36 @@ BOOST_AUTO_TEST_CASE(default_statelessness)
   BOOST_CHECK(!(a0 != a1));
 }
 
+BOOST_AUTO_TEST_CASE(default_from_conversion)
+{
+  cradle::polymorphic_allocator<int> a = std::allocator<int>();
+  {
+    bool result = true;
+    for (std::size_t i = 1u; i <= test_size; ++i) {
+      int *p = a.allocate(i);
+      for (std::size_t j = 0u; j < i; ++j) {
+        a.construct(p + j, j * 3 + 1);
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        result = result && (p[j] == boost::numeric_cast<int>(j * 3 + 1));
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        a.destroy(p + j);
+      }
+      a.deallocate(p, i);
+    }
+    BOOST_CHECK(result);
+  }
+  BOOST_CHECK_GE(a.max_size(), test_size);
+  BOOST_CHECK(a == a);
+  BOOST_CHECK(!(a != a));
+  cradle::polymorphic_allocator<int> b;
+  BOOST_CHECK(a == b);
+  BOOST_CHECK(b == a);
+  BOOST_CHECK(!(a != b));
+  BOOST_CHECK(!(b != a));
+}
+
 BOOST_AUTO_TEST_CASE(allocator_traits)
 {
   typedef cradle::polymorphic_allocator<int> A;
