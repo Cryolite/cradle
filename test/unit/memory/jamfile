@@ -4,12 +4,6 @@
 
 project cradle/test/unit/memory
   : requirements
-    <source>/cradle/src/type_traits//compile
-    <library>/cradle/src/type_traits//link
-    <source>/cradle/src/exception//compile
-    <library>/cradle/src/exception//link
-    <source>/cradle/src/utility//compile
-    <library>/cradle/src/utility//link
     <source>/cradle/src/memory//compile
     <library>/cradle/src/memory//link
   ;

@@ -2,7 +2,8 @@
 //  Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-#include <cradle/memory/polymorphic_allocator.hpp>
+#include <cradle/memory/memory_resource_adaptor.hpp>
+#include <cradle/memory/memory_resource.hpp>
 
 #include <cradle/utility/assert_precondition.hpp>
 #include <boost/detail/workaround.hpp>
@@ -51,17 +52,20 @@ memory_resource::share_inner_memory_resource()
 }
 
 
-std::shared_ptr<cradle::memory_resource> get_default_memory_resource()
+// Once this function does not exit via an exception, the subsequent calls
+// should succeed. In other words, if a call of the following function exits
+// via an exception, then there should not be any successful call.
+std::shared_ptr<memory_resource> get_default_memory_resource()
 {
 #if BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
-  typedef cradle::memory_resource_adaptor<std::allocator< ::max_align_t> >
-    default_memory_resource_adaptor;
+  typedef ::max_align_t max_align_type;
 #else // BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
-  typedef cradle::memory_resource_adaptor<std::allocator<std::max_align_t> >
-    default_memory_resource_adaptor;
+  typedef std::max_align_t max_align_type;
 #endif // BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
-  static std::shared_ptr<cradle::memory_resource> p
-    = std::make_shared<default_memory_resource_adaptor>();
+  typedef std::allocator<max_align_type> allocator_type;
+  typedef memory_resource_adaptor<allocator_type> adaptor_type;
+  static std::shared_ptr<memory_resource> p
+    = std::make_shared<adaptor_type>(allocator_type());
   return p;
 }
 

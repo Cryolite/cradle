@@ -8,19 +8,19 @@ import feature ;
 import option ;
 
 
-local with-intro = [ option.get "with-intro" : "UNSPECIFIED" : "IMPLIED" ] ;
+local with-intro = [ option.get with-intro : UNSPECIFIED : IMPLIED ] ;
 switch "$(with-intro)" {
-case "UNSPECIFIED" :
-  with-intro = "no" ;
-case "IMPLIED" :
-  with-intro = "yes" ;
-case "yes" :
-  with-intro = "yes" ;
-case "no" :
-  with-intro = "yes" ;
+case UNSPECIFIED :
+  with-intro = no ;
+case IMPLIED :
+  with-intro = yes ;
+case yes :
+  with-intro = yes ;
+case no :
+  with-intro = yes ;
 case "" :
   errors.error "the value specified for `--intro' is empty." ;
-case "*" :
+case * :
   errors.error "an invalid value `$(with-intro)' is specified for `--intro'." ;
 }
 constant CRADLE_WITH_INTRO : "$(with-intro)" ;
