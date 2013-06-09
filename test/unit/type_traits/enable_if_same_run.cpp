@@ -14,23 +14,46 @@ BOOST_AUTO_TEST_SUITE(enable_if_same)
 namespace{
 
 template<typename T, typename = cradle::enable_if_same<T, void> >
-constexpr bool test(int)
+constexpr bool is_void_test_(int)
 {
   return true;
 }
 
 template<typename T>
-constexpr bool test(...)
+constexpr bool is_void_test_(...)
 {
   return false;
 }
 
 } // namespace `unnamed'
 
-BOOST_AUTO_TEST_CASE(main)
+BOOST_AUTO_TEST_CASE(enable_if_same)
 {
-  static_assert(test<void>(0), "");
-  static_assert(!test<int>(0), "");
+  static_assert(is_void_test_<void>(0), "");
+  static_assert(!is_void_test_<int>(0), "");
+}
+
+
+namespace{
+
+template<typename T, typename = cradle::disable_if_same<T, void> >
+constexpr bool is_not_void_test_(int)
+{
+  return true;
+}
+
+template<typename T>
+constexpr bool is_not_void_test_(...)
+{
+  return false;
+}
+
+} // namespace `unnamed'
+
+BOOST_AUTO_TEST_CASE(disable_if_same)
+{
+  static_assert(!is_not_void_test_<void>(0), "");
+  static_assert(is_not_void_test_<int>(0), "");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

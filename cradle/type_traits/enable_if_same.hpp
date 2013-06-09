@@ -14,6 +14,10 @@ template<typename T, typename U, typename R = void>
 using enable_if_same
   = typename std::enable_if<std::is_same<T, U>::value, R>::type;
 
+template<typename T, typename U, typename R = void>
+using disable_if_same
+  = typename std::enable_if<!std::is_same<T, U>::value, R>::type;
+
 } // namespace cradle
 
 
