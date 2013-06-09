@@ -5,6 +5,7 @@
 #include <cradle/memory/polymorphic_allocator.hpp>
 
 #include <boost/test/unit_test.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include <type_traits>
 #include <memory>
 #include <utility>
@@ -19,7 +20,7 @@ BOOST_AUTO_TEST_SUITE(polymorphic_allocator)
 
 namespace{
 
-constexpr std::size_t test_size = 128u;
+constexpr std::size_t test_size = 1024u;
 
 } // namespace `unnamed'
 
@@ -45,18 +46,22 @@ BOOST_AUTO_TEST_CASE(default_value)
   static_assert(!std::is_move_assignable<A>::value, "");
 
   A a;
-  for (std::size_t i = 1u; i <= test_size; ++i) {
-    int *p = a.allocate(i);
-    for (std::size_t j = 0u; j < i; ++j) {
-      a.construct(p + j, j * 3 + 1);
+  {
+    bool result = true;
+    for (std::size_t i = 1u; i <= test_size; ++i) {
+      int *p = a.allocate(i);
+      for (std::size_t j = 0u; j < i; ++j) {
+        a.construct(p + j, j * 3 + 1);
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        result = result && (p[j] == boost::numeric_cast<int>(j * 3 + 1));
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        a.destroy(p + j);
+      }
+      a.deallocate(p, i);
     }
-    for (std::size_t j = 0u; j < i; ++j) {
-      BOOST_CHECK_EQUAL(p[j], j * 3 + 1);
-    }
-    for (std::size_t j = 0u; j < i; ++j) {
-      a.destroy(p + j);
-    }
-    a.deallocate(p, i);
+    BOOST_CHECK(result);
   }
   BOOST_CHECK_GE(a.max_size(), test_size);
   BOOST_CHECK(a.select_on_container_copy_construction() == a);
@@ -68,31 +73,35 @@ BOOST_AUTO_TEST_CASE(default_copy_interoperability)
 {
   cradle::polymorphic_allocator<int> a0;
   cradle::polymorphic_allocator<int> a1 = a0;
-  for (std::size_t i = 1u; i <= test_size; ++i) {
-    int *p = a0.allocate(i);
-    for (std::size_t j = 0u; j < i; ++j) {
-      a0.construct(p + j, j * 3 + 1);
+  {
+    bool result = true;
+    for (std::size_t i = 1u; i <= test_size; ++i) {
+      int *p = a0.allocate(i);
+      for (std::size_t j = 0u; j < i; ++j) {
+        a0.construct(p + j, j * 3 + 1);
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        result = result && (p[j] == boost::numeric_cast<int>(j * 3 + 1));
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        a1.destroy(p + j);
+      }
+      a1.deallocate(p, i);
     }
-    for (std::size_t j = 0u; j < i; ++j) {
-      BOOST_CHECK_EQUAL(p[j], j * 3 + 1);
+    for (std::size_t i = 1u; i <= test_size; ++i) {
+      int *p = a1.allocate(i);
+      for (std::size_t j = 0u; j < i; ++j) {
+        a1.construct(p + j, j * 3 + 1);
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        result = result && (p[j] == boost::numeric_cast<int>(j * 3 + 1));
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        a0.destroy(p + j);
+      }
+      a0.deallocate(p, i);
     }
-    for (std::size_t j = 0u; j < i; ++j) {
-      a1.destroy(p + j);
-    }
-    a1.deallocate(p, i);
-  }
-  for (std::size_t i = 1u; i <= test_size; ++i) {
-    int *p = a1.allocate(i);
-    for (std::size_t j = 0u; j < i; ++j) {
-      a1.construct(p + j, j * 3 + 1);
-    }
-    for (std::size_t j = 0u; j < i; ++j) {
-      BOOST_CHECK_EQUAL(p[j], j * 3 + 1);
-    }
-    for (std::size_t j = 0u; j < i; ++j) {
-      a0.destroy(p + j);
-    }
-    a0.deallocate(p, i);
+    BOOST_CHECK(result);
   }
   BOOST_CHECK(a1 == a0);
   BOOST_CHECK(a0 == a1);
@@ -104,31 +113,35 @@ BOOST_AUTO_TEST_CASE(default_move_interoperability)
 {
   cradle::polymorphic_allocator<int> a0;
   cradle::polymorphic_allocator<int> a1 = std::move(a0);
-  for (std::size_t i = 1u; i <= test_size; ++i) {
-    int *p = a0.allocate(i);
-    for (std::size_t j = 0u; j < i; ++j) {
-      a0.construct(p + j, j * 3 + 1);
+  {
+    bool result = true;
+    for (std::size_t i = 1u; i <= test_size; ++i) {
+      int *p = a0.allocate(i);
+      for (std::size_t j = 0u; j < i; ++j) {
+        a0.construct(p + j, j * 3 + 1);
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        result = result && (p[j] == boost::numeric_cast<int>(j * 3 + 1));
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        a1.destroy(p + j);
+      }
+      a1.deallocate(p, i);
     }
-    for (std::size_t j = 0u; j < i; ++j) {
-      BOOST_CHECK_EQUAL(p[j], j * 3 + 1);
+    for (std::size_t i = 1u; i <= test_size; ++i) {
+      int *p = a1.allocate(i);
+      for (std::size_t j = 0u; j < i; ++j) {
+        a1.construct(p + j, j * 3 + 1);
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        result = result && (p[j] == boost::numeric_cast<int>(j * 3 + 1));
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        a0.destroy(p + j);
+      }
+      a0.deallocate(p, i);
     }
-    for (std::size_t j = 0u; j < i; ++j) {
-      a1.destroy(p + j);
-    }
-    a1.deallocate(p, i);
-  }
-  for (std::size_t i = 1u; i <= test_size; ++i) {
-    int *p = a1.allocate(i);
-    for (std::size_t j = 0u; j < i; ++j) {
-      a1.construct(p + j, j * 3 + 1);
-    }
-    for (std::size_t j = 0u; j < i; ++j) {
-      BOOST_CHECK_EQUAL(p[j], j * 3 + 1);
-    }
-    for (std::size_t j = 0u; j < i; ++j) {
-      a0.destroy(p + j);
-    }
-    a0.deallocate(p, i);
+    BOOST_CHECK(result);
   }
   BOOST_CHECK(a1 == a0);
   BOOST_CHECK(a0 == a1);
@@ -140,31 +153,35 @@ BOOST_AUTO_TEST_CASE(default_copy_conversion_interoperability)
 {
   cradle::polymorphic_allocator<int> a;
   cradle::polymorphic_allocator<double> b(a);
-  for (std::size_t i = 1u; i <= test_size; ++i) {
-    int *p = a.allocate(i);
-    for (std::size_t j = 0u; j < i; ++j) {
-      a.construct(p + j, j * 3 + 1);
+  {
+    bool result = true;
+    for (std::size_t i = 1u; i <= test_size; ++i) {
+      int *p = a.allocate(i);
+      for (std::size_t j = 0u; j < i; ++j) {
+        a.construct(p + j, j * 3 + 1);
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        result = result && (p[j] == boost::numeric_cast<int>(j * 3 + 1));
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        a.destroy(p + j);
+      }
+      a.deallocate(p, i);
     }
-    for (std::size_t j = 0u; j < i; ++j) {
-      BOOST_CHECK_EQUAL(p[j], j * 3 + 1);
+    for (std::size_t i = 1u; i <= test_size; ++i) {
+      double *p = b.allocate(i);
+      for (std::size_t j = 0u; j < i; ++j) {
+        b.construct(p + j, j * 3 + 1);
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        result = result && (p[j] == j * 3 + 1);
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        b.destroy(p + j);
+      }
+      b.deallocate(p, i);
     }
-    for (std::size_t j = 0u; j < i; ++j) {
-      a.destroy(p + j);
-    }
-    a.deallocate(p, i);
-  }
-  for (std::size_t i = 1u; i <= test_size; ++i) {
-    double *p = b.allocate(i);
-    for (std::size_t j = 0u; j < i; ++j) {
-      b.construct(p + j, j * 3 + 1);
-    }
-    for (std::size_t j = 0u; j < i; ++j) {
-      BOOST_CHECK_EQUAL(p[j], j * 3 + 1);
-    }
-    for (std::size_t j = 0u; j < i; ++j) {
-      b.destroy(p + j);
-    }
-    b.deallocate(p, i);
+    BOOST_CHECK(result);
   }
   BOOST_CHECK(a == b);
   BOOST_CHECK(b == a);
@@ -176,31 +193,35 @@ BOOST_AUTO_TEST_CASE(default_move_conversion_interoperability)
 {
   cradle::polymorphic_allocator<int> a;
   cradle::polymorphic_allocator<double> b(std::move(a));
-  for (std::size_t i = 1u; i <= test_size; ++i) {
-    int *p = a.allocate(i);
-    for (std::size_t j = 0u; j < i; ++j) {
-      a.construct(p + j, j * 3 + 1);
+  {
+    bool result = true;
+    for (std::size_t i = 1u; i <= test_size; ++i) {
+      int *p = a.allocate(i);
+      for (std::size_t j = 0u; j < i; ++j) {
+        a.construct(p + j, j * 3 + 1);
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        result = result && (p[j] == boost::numeric_cast<int>(j * 3 + 1));
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        a.destroy(p + j);
+      }
+      a.deallocate(p, i);
     }
-    for (std::size_t j = 0u; j < i; ++j) {
-      BOOST_CHECK_EQUAL(p[j], j * 3 + 1);
+    for (std::size_t i = 1u; i <= test_size; ++i) {
+      double *p = b.allocate(i);
+      for (std::size_t j = 0u; j < i; ++j) {
+        b.construct(p + j, j * 3 + 1);
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        result = result && (p[j] == j * 3 + 1);
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        b.destroy(p + j);
+      }
+      b.deallocate(p, i);
     }
-    for (std::size_t j = 0u; j < i; ++j) {
-      a.destroy(p + j);
-    }
-    a.deallocate(p, i);
-  }
-  for (std::size_t i = 1u; i <= test_size; ++i) {
-    double *p = b.allocate(i);
-    for (std::size_t j = 0u; j < i; ++j) {
-      b.construct(p + j, j * 3 + 1);
-    }
-    for (std::size_t j = 0u; j < i; ++j) {
-      BOOST_CHECK_EQUAL(p[j], j * 3 + 1);
-    }
-    for (std::size_t j = 0u; j < i; ++j) {
-      b.destroy(p + j);
-    }
-    b.deallocate(p, i);
+    BOOST_CHECK(result);
   }
   BOOST_CHECK(a == b);
   BOOST_CHECK(b == a);
@@ -212,31 +233,35 @@ BOOST_AUTO_TEST_CASE(default_statelessness)
 {
   cradle::polymorphic_allocator<int> a0;
   cradle::polymorphic_allocator<int> a1;
-  for (std::size_t i = 1u; i <= test_size; ++i) {
-    int *p = a0.allocate(i);
-    for (std::size_t j = 0u; j < i; ++j) {
-      a0.construct(p + j, j * 3 + 1);
+  {
+    bool result = true;
+    for (std::size_t i = 1u; i <= test_size; ++i) {
+      int *p = a0.allocate(i);
+      for (std::size_t j = 0u; j < i; ++j) {
+        a0.construct(p + j, j * 3 + 1);
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        result = result && (p[j] == boost::numeric_cast<int>(j * 3 + 1));
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        a1.destroy(p + j);
+      }
+      a1.deallocate(p, i);
     }
-    for (std::size_t j = 0u; j < i; ++j) {
-      BOOST_CHECK_EQUAL(p[j], j * 3 + 1);
+    for (std::size_t i = 1u; i <= test_size; ++i) {
+      int *p = a1.allocate(i);
+      for (std::size_t j = 0u; j < i; ++j) {
+        a1.construct(p + j, j * 3 + 1);
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        result = result && (p[j] == boost::numeric_cast<int>(j * 3 + 1));
+      }
+      for (std::size_t j = 0u; j < i; ++j) {
+        a0.destroy(p + j);
+      }
+      a0.deallocate(p, i);
     }
-    for (std::size_t j = 0u; j < i; ++j) {
-      a1.destroy(p + j);
-    }
-    a1.deallocate(p, i);
-  }
-  for (std::size_t i = 1u; i <= test_size; ++i) {
-    int *p = a1.allocate(i);
-    for (std::size_t j = 0u; j < i; ++j) {
-      a1.construct(p + j, j * 3 + 1);
-    }
-    for (std::size_t j = 0u; j < i; ++j) {
-      BOOST_CHECK_EQUAL(p[j], j * 3 + 1);
-    }
-    for (std::size_t j = 0u; j < i; ++j) {
-      a0.destroy(p + j);
-    }
-    a0.deallocate(p, i);
+    BOOST_CHECK(result);
   }
   BOOST_CHECK(a1 == a0);
   BOOST_CHECK(a0 == a1);
