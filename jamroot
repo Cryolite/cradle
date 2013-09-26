@@ -125,3 +125,4 @@ use-project /cradle/src/utility : src/utility ;
 use-project /cradle/src/memory : src/memory ;
 use-project /cradle/src/functional : src/functional ;
 use-project /cradle/src/scope_guard : src/scope_guard ;
+use-project /cradle/src/container : src/container ;
