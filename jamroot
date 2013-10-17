@@ -116,6 +116,7 @@ else {
 
 use-project /cradle/ext/glibc : ext/glibc ;
 use-project /cradle/ext/libstdcxx : ext/libstdcxx ;
+use-project /cradle/ext/icu4c : ext/icu4c ;
 use-project /cradle/ext/boost : ext/boost ;
 use-project /cradle/src : src ;
 use-project /cradle/src/mpl : src/mpl ;
@@ -126,3 +127,4 @@ use-project /cradle/src/memory : src/memory ;
 use-project /cradle/src/functional : src/functional ;
 use-project /cradle/src/scope_guard : src/scope_guard ;
 use-project /cradle/src/container : src/container ;
+use-project /cradle/src/unicode : src/unicode ;
