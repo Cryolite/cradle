@@ -1,0 +1,28 @@
+# (C) Copyright Cryolite 2013. Distributed under the Boost
+# Software License, Version 1.0. (See accompanying file
+# LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+project cradle/ext/icu4c
+  ;
+
+for local i in icudt icuuc icuin icuio icule iculx icutu
+{
+  alias "$(i)_compile"
+    : "/site-config//$(i)_compile"
+    ;
+  explicit "$(i)_compile"
+    ;
+  alias "$(i)_link"
+    : "/site-config//$(i)_link"
+    ;
+  explicit "$(i)_link"
+    ;
+  alias "$(i)"
+    : "$(i)_compile"
+    :
+    :
+    : "<library>$(i)_link"
+    ;
+  explicit "$(i)"
+    ;
+}

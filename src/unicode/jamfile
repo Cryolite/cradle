@@ -1,0 +1,31 @@
+# (C) Copyright Cryolite 2013. Distributed under the Boost
+# Software License, Version 1.0. (See accompanying file
+# LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+project cradle/src/unicode
+  : requirements
+    <source>/cradle/ext/icu4c//icudt_compile
+    <library>/cradle/ext/icu4c//icudt_link
+    <source>/cradle/ext/icu4c//icuin_compile
+    <library>/cradle/ext/icu4c//icuin_link
+    <source>/cradle/src/exception//compile
+    <library>/cradle/src/exception//link
+  ;
+
+import path ;
+import regex ;
+
+local .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
+.here = [ path.make "$(.here)" ] ;
+
+local .objs ;
+
+for local i in [ path.glob "$(.here)" : *.cpp ] {
+  obj "$(i:B).obj" : "$(i)" : $(CRADLE_COMPILE_PROPERTIES) ;
+  explicit "$(i:B).obj" ;
+  .objs += "$(i:B).obj" ;
+}
+
+alias compile ;
+
+alias link : : : : <library>"$(.objs)" ;
