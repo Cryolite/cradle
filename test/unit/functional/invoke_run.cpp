@@ -3,9 +3,18 @@
 #include <cradle/utility/as_const.hpp>
 #include <cradle/config/config.hpp>
 #include <boost/test/unit_test.hpp>
+#include <boost/detail/workaround.hpp>
 #include <memory>
 #include <type_traits>
 #include <utility>
+
+namespace cradle{
+
+template<typename T>
+void suppress_unused_variable_warning(T const volatile &)
+{}
+
+} // namespace cradle
 
 BOOST_AUTO_TEST_SUITE(functional)
 
@@ -131,16 +140,30 @@ BOOST_AUTO_TEST_CASE(nullary_member_function)
   {
     void (S::*pmf)() = &S::mf;
 
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+    cradle::suppress_unused_variable_warning(pmf);
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(pmf, &s), void);
     static_assert(!noexcept(cradle::invoke(pmf, &s)), "");
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     gi = 0;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+    (s.*pmf)();
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     cradle::invoke(pmf, &s);
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     BOOST_CHECK_EQUAL(gi, 1);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(cradle::as_const(pmf), &s), void);
     static_assert(!noexcept(cradle::invoke(cradle::as_const(pmf), &s)), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     gi = 0;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+    (s.*cradle::as_const(pmf))();
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     cradle::invoke(cradle::as_const(pmf), &s);
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     BOOST_CHECK_EQUAL(gi, 1);
   }
 
@@ -150,7 +173,9 @@ BOOST_AUTO_TEST_CASE(nullary_member_function)
   cradle::invoke(&S::mf, s);
   BOOST_CHECK_EQUAL(gi, 1);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(), S const &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke(&S::mf, std::move(s)), void);
   static_assert(!noexcept(cradle::invoke(&S::mf, std::move(s))), "");
@@ -158,25 +183,41 @@ BOOST_AUTO_TEST_CASE(nullary_member_function)
   cradle::invoke(&S::mf, std::move(s));
   BOOST_CHECK_EQUAL(gi, 1);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::mf, &s), void);
   static_assert(!noexcept(cradle::invoke(&S::mf, &s)), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   gi = 0;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+  (s.*&S::mf)();
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   cradle::invoke(&S::mf, &s);
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(gi, 1);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(), S const *>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   {
     std::shared_ptr<S> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::mf, p), void);
     static_assert(!noexcept(cradle::invoke(&S::mf, p)), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     gi = 0;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+    ((*p).*&S::mf)();
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     cradle::invoke(&S::mf, p);
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     BOOST_CHECK_EQUAL(gi, 1);
   }
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(), std::shared_ptr<S const> &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke<void>(&S::mf, s), void);
   static_assert(!noexcept(cradle::invoke<void>(&S::mf, s)), "");
@@ -231,35 +272,62 @@ BOOST_AUTO_TEST_CASE(nullary_const_member_function)
   cradle::invoke(&S::cmf, std::move(s));
   BOOST_CHECK_EQUAL(gi, 1);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::cmf, &s), void);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!noexcept(cradle::invoke(&S::cmf, &s)), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   gi = 0;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+  ((&s)->*&S::cmf)();
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   cradle::invoke(&S::cmf, &s);
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(gi, 1);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::cmf, &cradle::as_const(s)), void);
   static_assert(!noexcept(cradle::invoke(&S::cmf, &cradle::as_const(s))), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   gi = 0;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+  ((&cradle::as_const(s))->*&S::cmf)();
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   cradle::invoke(&S::cmf, &cradle::as_const(s));
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(gi, 1);
 
   {
     std::shared_ptr<S> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::cmf, p), void);
     static_assert(!noexcept(cradle::invoke(&S::cmf, p)), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     gi = 0;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+    ((*p).*&S::cmf)();
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     cradle::invoke(&S::cmf, p);
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     BOOST_CHECK_EQUAL(gi, 1);
   }
 
   {
     std::shared_ptr<S const> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::cmf, p), void);
     static_assert(!noexcept(cradle::invoke(&S::cmf, p)), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     gi = 0;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+    ((*p).*&S::cmf)();
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     cradle::invoke(&S::cmf, p);
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     BOOST_CHECK_EQUAL(gi, 1);
   }
 
@@ -311,7 +379,9 @@ BOOST_AUTO_TEST_CASE(nullary_nothrow_member_function)
   cradle::invoke(&S::ntmf, s);
   BOOST_CHECK_EQUAL(gi, 1);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)() noexcept, S const &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke(&S::ntmf, std::move(s)), void);
 #if !defined(CRADLE_NO_NOEXCEPT_ON_FUNCTION_POINTERS)
@@ -321,29 +391,45 @@ BOOST_AUTO_TEST_CASE(nullary_nothrow_member_function)
   cradle::invoke(&S::ntmf, std::move(s));
   BOOST_CHECK_EQUAL(gi, 1);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::ntmf, &s), void);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 #if !defined(CRADLE_NO_NOEXCEPT_ON_FUNCTION_POINTERS)
   static_assert(noexcept(cradle::invoke(&S::ntmf, &s)), "");
 #endif
   gi = 0;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+  ((&s)->*&S::ntmf)();
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   cradle::invoke(&S::ntmf, &s);
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(gi, 1);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)() noexcept, S const *>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   {
     std::shared_ptr<S> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::ntmf, p), void);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 #if !defined(CRADLE_NO_NOEXCEPT_ON_FUNCTION_POINTERS)
     static_assert(noexcept(cradle::invoke(&S::ntmf, p)), "");
 #endif
     gi = 0;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+    ((*p).*&S::ntmf)();
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     cradle::invoke(&S::ntmf, p);
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     BOOST_CHECK_EQUAL(gi, 1);
   }
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)() noexcept, std::shared_ptr<S const> &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke<void>(&S::ntmf, s), void);
 #if !defined(CRADLE_NO_NOEXCEPT_ON_FUNCTION_POINTERS)
@@ -410,43 +496,67 @@ BOOST_AUTO_TEST_CASE(nothrow_const_member_function)
   cradle::invoke(&S::ntcmf, std::move(s));
   BOOST_CHECK_EQUAL(gi, 1);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::ntcmf, &s), void);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 #if !defined(CRADLE_NO_NOEXCEPT_ON_FUNCTION_POINTERS)
   static_assert(noexcept(cradle::invoke(&S::ntcmf, &s)), "");
 #endif
   gi = 0;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+  ((&s)->*&S::ntcmf)();
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   cradle::invoke(&S::ntcmf, &s);
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(gi, 1);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::ntcmf, &cradle::as_const(s)), void);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 #if !defined(CRADLE_NO_NOEXCEPT_ON_FUNCTION_POINTERS)
   static_assert(noexcept(cradle::invoke(&S::ntcmf, &cradle::as_const(s))), "");
 #endif
   gi = 0;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+  ((&cradle::as_const(s))->*&S::ntcmf)();
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   cradle::invoke(&S::ntcmf, &cradle::as_const(s));
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(gi, 1);
 
   {
     std::shared_ptr<S> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::ntcmf, p), void);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 #if !defined(CRADLE_NO_NOEXCEPT_ON_FUNCTION_POINTERS)
     static_assert(noexcept(cradle::invoke(&S::ntcmf, p)), "");
 #endif
     gi = 0;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+    ((*p).*&S::ntcmf)();
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     cradle::invoke(&S::ntcmf, p);
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     BOOST_CHECK_EQUAL(gi, 1);
   }
 
   {
     std::shared_ptr<S const> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::ntcmf, p), void);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 #if !defined(CRADLE_NO_NOEXCEPT_ON_FUNCTION_POINTERS)
     static_assert(noexcept(cradle::invoke(&S::ntcmf, p)), "");
 #endif
     gi = 0;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+    ((*p).*&S::ntcmf)();
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     cradle::invoke(&S::ntcmf, p);
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     BOOST_CHECK_EQUAL(gi, 1);
   }
 
@@ -490,30 +600,44 @@ BOOST_AUTO_TEST_CASE(nullary_member_function_returning_prvaue)
   gi = 3;
   BOOST_CHECK_EQUAL(cradle::invoke(&S::mf0p, s), 6);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<int (S::*)(), S const &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke(&S::mf0p, std::move(s)), int);
   static_assert(!noexcept(cradle::invoke(&S::mf0p, std::move(s))), "");
   gi = 4;
   BOOST_CHECK_EQUAL(cradle::invoke(&S::mf0p, std::move(s)), 8);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::mf0p, &s), int);
   static_assert(!noexcept(cradle::invoke(&S::mf0p, &s)), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   gi = 5;
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(cradle::invoke(&S::mf0p, &s), 10);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<int (S::*)(), S const * &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   {
     std::shared_ptr<S> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::mf0p, p), int);
     static_assert(!noexcept(cradle::invoke(&S::mf0p, p)), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     gi = 6;
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     BOOST_CHECK_EQUAL(cradle::invoke(&S::mf0p, p), 12);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   }
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<int (S::*)(), std::shared_ptr<S const> &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke<int>(&S::mf0p, s), int);
   static_assert(!noexcept(cradle::invoke<int>(&S::mf0p, s)), "");
@@ -534,24 +658,38 @@ BOOST_AUTO_TEST_CASE(nullary_member_function_returning_prvaue)
   static_assert(!noexcept(cradle::invoke<void const>(&S::mf0p, s)), "");
   cradle::invoke<void const>(&S::mf0p, s);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<int>(&S::mf0p, &s), int);
   static_assert(!noexcept(cradle::invoke<int>(&S::mf0p, &s)), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   gi = 8;
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(cradle::invoke<int>(&S::mf0p, &s), 16);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<void>(&S::mf0p, &s), void);
   static_assert(!noexcept(cradle::invoke<void>(&S::mf0p, &s)), "");
   cradle::invoke<void>(&S::mf0p, &s);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<void const>(&S::mf0p, &s), void);
   static_assert(!noexcept(cradle::invoke<void const>(&S::mf0p, &s)), "");
   cradle::invoke<void const>(&S::mf0p, &s);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test_explicit<int &, int (S::*)(), S * &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test_explicit<int const &, int (S::*)(), S * &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test_explicit<int &&, int (S::*)(), S * &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 }
 
 BOOST_AUTO_TEST_CASE(nullary_member_function_returning_lvalue)
@@ -574,27 +712,37 @@ BOOST_AUTO_TEST_CASE(nullary_member_function_returning_lvalue)
   static_assert(!noexcept(cradle::invoke(&S::mf0l, s)), "");
   BOOST_CHECK_EQUAL(&cradle::invoke(&S::mf0l, s), &gi);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<int &(S::*)(), int const &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke(&S::mf0l, std::move(s)), int &);
   static_assert(!noexcept(cradle::invoke(&S::mf0l, std::move(s))), "");
   BOOST_CHECK_EQUAL(&cradle::invoke(&S::mf0l, std::move(s)), &gi);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::mf0l, &s), int &);
   static_assert(!noexcept(cradle::invoke(&S::mf0l, &s)), "");
   BOOST_CHECK_EQUAL(&cradle::invoke(&S::mf0l, &s), &gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<int &(S::*)(), int const * &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   {
     std::shared_ptr<S> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::mf0l, p), int &);
     static_assert(!noexcept(cradle::invoke(&S::mf0l, p)), "");
     BOOST_CHECK_EQUAL(&cradle::invoke(&S::mf0l, p), &gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   }
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<int &(S::*)(), std::shared_ptr<int const> &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke<int &>(&S::mf0l, s), int &);
   static_assert(!noexcept(cradle::invoke<int &>(&S::mf0l, s)), "");
@@ -609,11 +757,15 @@ BOOST_AUTO_TEST_CASE(nullary_member_function_returning_lvalue)
   gi = 2;
   BOOST_CHECK_EQUAL(cradle::invoke<int>(&S::mf0l, s), gi);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<int &>(&S::mf0l, &s), int &);
   static_assert(!noexcept(cradle::invoke<int &>(&S::mf0l, &s)), "");
   BOOST_CHECK_EQUAL(&cradle::invoke<int &>(&S::mf0l, &s), &gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test_explicit<int &&, int &(S::*)(), int &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke<void>(&S::mf0l, s), void);
   static_assert(!noexcept(cradle::invoke<void>(&S::mf0l, s)), "");
@@ -623,24 +775,36 @@ BOOST_AUTO_TEST_CASE(nullary_member_function_returning_lvalue)
   static_assert(!noexcept(cradle::invoke<void const>(&S::mf0l, s)), "");
   cradle::invoke<void const>(&S::mf0l, s);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<int const &>(&S::mf0l, &s), int const &);
   static_assert(!noexcept(cradle::invoke<int const &>(&S::mf0l, &s)), "");
   BOOST_CHECK_EQUAL(&cradle::invoke<int const &>(&S::mf0l, &s), &gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<int>(&S::mf0l, &s), int);
   static_assert(!noexcept(cradle::invoke<int>(&S::mf0l, &s)), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   gi = 3;
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(cradle::invoke<int>(&S::mf0l, &s), gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<void>(&S::mf0l, &s), void);
   static_assert(!noexcept(cradle::invoke<void>(&S::mf0l, &s)), "");
   cradle::invoke<void>(&S::mf0l, &s);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<void const>(&S::mf0l, &s), void);
   static_assert(!noexcept(cradle::invoke<void const>(&S::mf0l, &s)), "");
   cradle::invoke<void const>(&S::mf0l, &s);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test_explicit<int &&, int &(S::*)(), int * &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 }
 
 BOOST_AUTO_TEST_CASE(nullary_member_function_returning_const_lvalue)
@@ -663,27 +827,37 @@ BOOST_AUTO_TEST_CASE(nullary_member_function_returning_const_lvalue)
   static_assert(!noexcept(cradle::invoke(&S::mf0cl, s)), "");
   BOOST_CHECK_EQUAL(&cradle::invoke(&S::mf0cl, s), &gi);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<int const &(S::*)(), int const &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke(&S::mf0cl, std::move(s)), int const &);
   static_assert(!noexcept(cradle::invoke(&S::mf0cl, std::move(s))), "");
   BOOST_CHECK_EQUAL(&cradle::invoke(&S::mf0cl, std::move(s)), &gi);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::mf0cl, &s), int const &);
   static_assert(!noexcept(cradle::invoke(&S::mf0cl, &s)), "");
   BOOST_CHECK_EQUAL(&cradle::invoke(&S::mf0cl, &s), &gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<int const &(S::*)(), int const * &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   {
     std::shared_ptr<S> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::mf0cl, p), int const &);
     static_assert(!noexcept(cradle::invoke(&S::mf0cl, p)), "");
     BOOST_CHECK_EQUAL(&cradle::invoke(&S::mf0cl, p), &gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   }
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<int const &(S::*)(), std::shared_ptr<int const> &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke<int const &>(&S::mf0cl, s), int const &);
   static_assert(!noexcept(cradle::invoke<int const &>(&S::mf0cl, s)), "");
@@ -694,9 +868,13 @@ BOOST_AUTO_TEST_CASE(nullary_member_function_returning_const_lvalue)
   gi = 2;
   BOOST_CHECK_EQUAL(cradle::invoke<int>(&S::mf0cl, s), gi);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test_explicit<int &, int const &(S::*)(), int &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test_explicit<int &&, int const &(S::*)(), int &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke<void>(&S::mf0cl, s), void);
   static_assert(!noexcept(cradle::invoke<void>(&S::mf0cl, s)), "");
@@ -706,26 +884,40 @@ BOOST_AUTO_TEST_CASE(nullary_member_function_returning_const_lvalue)
   static_assert(!noexcept(cradle::invoke<void const>(&S::mf0cl, s)), "");
   cradle::invoke<void const>(&S::mf0cl, s);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<int const &>(&S::mf0cl, &s), int const &);
   static_assert(!noexcept(cradle::invoke<int const &>(&S::mf0cl, &s)), "");
   BOOST_CHECK_EQUAL(&cradle::invoke<int const &>(&S::mf0cl, &s), &gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<int>(&S::mf0cl, &s), int);
   static_assert(!noexcept(cradle::invoke<int>(&S::mf0cl, &s)), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   gi = 3;
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(cradle::invoke<int>(&S::mf0cl, &s), gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test_explicit<int &, int const &(S::*)(), int * &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test_explicit<int &&, int const &(S::*)(), int * &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<void>(&S::mf0cl, &s), void);
   static_assert(!noexcept(cradle::invoke<void>(&S::mf0cl, &s)), "");
   cradle::invoke<void>(&S::mf0cl, &s);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<void const>(&S::mf0cl, &s), void);
   static_assert(!noexcept(cradle::invoke<void const>(&S::mf0cl, &s)), "");
   cradle::invoke<void const>(&S::mf0cl, &s);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 }
 
 BOOST_AUTO_TEST_CASE(nullary_member_function_returning_xvalue)
@@ -748,27 +940,37 @@ BOOST_AUTO_TEST_CASE(nullary_member_function_returning_xvalue)
   static_assert(!noexcept(cradle::invoke(&S::mf0x, s)), "");
   BOOST_CHECK_EQUAL(&static_cast<int const &>(cradle::invoke(&S::mf0x, s)), &gi);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<int &&(S::*)(), int const &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke(&S::mf0x, std::move(s)), int &&);
   static_assert(!noexcept(cradle::invoke(&S::mf0x, std::move(s))), "");
   BOOST_CHECK_EQUAL(&static_cast<int const &>(cradle::invoke(&S::mf0x, std::move(s))), &gi);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::mf0x, &s), int &&);
   static_assert(!noexcept(cradle::invoke(&S::mf0x, &s)), "");
   BOOST_CHECK_EQUAL(&static_cast<int const &>(cradle::invoke(&S::mf0x, &s)), &gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<int &&(S::*)(), int const * &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   {
     std::shared_ptr<S> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::mf0x, p), int &&);
     static_assert(!noexcept(cradle::invoke(&S::mf0x, p)), "");
     BOOST_CHECK_EQUAL(&static_cast<int const &>(cradle::invoke(&S::mf0x, p)), &gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   }
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<int &&(S::*)(), std::shared_ptr<int const> &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke<int const &>(&S::mf0x, s), int const &);
   static_assert(!noexcept(cradle::invoke<int const &>(&S::mf0x, s)), "");
@@ -783,7 +985,9 @@ BOOST_AUTO_TEST_CASE(nullary_member_function_returning_xvalue)
   static_assert(!noexcept(cradle::invoke<int &&>(&S::mf0x, s)), "");
   BOOST_CHECK_EQUAL(&static_cast<int const &>(cradle::invoke<int &&>(&S::mf0x, s)), &gi);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test_explicit<int &, int &&(S::*)(), int &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke<void>(&S::mf0x, s), void);
   static_assert(!noexcept(cradle::invoke<void>(&S::mf0x, s)), "");
@@ -793,37 +997,55 @@ BOOST_AUTO_TEST_CASE(nullary_member_function_returning_xvalue)
   static_assert(!noexcept(cradle::invoke<void const>(&S::mf0x, s)), "");
   cradle::invoke<void const>(&S::mf0x, s);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<int const &>(&S::mf0x, &s), int const &);
   static_assert(!noexcept(cradle::invoke<int const &>(&S::mf0x, &s)), "");
   BOOST_CHECK_EQUAL(&cradle::invoke<int const &>(&S::mf0x, &s), &gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<int>(&S::mf0x, &s), int);
   static_assert(!noexcept(cradle::invoke<int>(&S::mf0x, &s)), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   gi = 3;
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(cradle::invoke<int>(&S::mf0x, &s), gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<int &&>(&S::mf0x, &s), int &&);
   static_assert(!noexcept(cradle::invoke<int &&>(&S::mf0x, &s)), "");
   BOOST_CHECK_EQUAL(&static_cast<int const &>(cradle::invoke<int &&>(&S::mf0x, &s)), &gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test_explicit<int &, int &&(S::*)(), int * &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<void>(&S::mf0x, &s), void);
   static_assert(!noexcept(cradle::invoke<void>(&S::mf0x, &s)), "");
   cradle::invoke<void>(&S::mf0x, &s);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<void const>(&S::mf0x, &s), void);
   static_assert(!noexcept(cradle::invoke<void const>(&S::mf0x, &s)), "");
   cradle::invoke<void const>(&S::mf0x, &s);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 }
 
 BOOST_AUTO_TEST_CASE(unary_member_function_with_prvalue)
 {
   S s;
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int), S &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int), S &, int, int>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   {
     void (S::*pmf)(int) = &S::mf1p;
@@ -841,27 +1063,37 @@ BOOST_AUTO_TEST_CASE(unary_member_function_with_prvalue)
   static_assert(!noexcept(cradle::invoke(&S::mf1p, s, 42)), "");
   cradle::invoke(&S::mf1p, s, 42);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int), S const &, int>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke(&S::mf1p, std::move(s), 42), void);
   static_assert(!noexcept(cradle::invoke(&S::mf1p, std::move(s), 42)), "");
   cradle::invoke(&S::mf1p, std::move(s), 42);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::mf1p, &s, 42), void);
   static_assert(!noexcept(cradle::invoke(&S::mf1p, &s, 42)), "");
   cradle::invoke(&S::mf1p, &s, 42);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int), S const *, int>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   {
     std::shared_ptr<S> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::mf1p, p, 42), void);
     static_assert(!noexcept(cradle::invoke(&S::mf1p, p, 42)), "");
     cradle::invoke(&S::mf1p, p, 42);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   }
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int), std::shared_ptr<S const> &, int>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   {
     int i = 42;
@@ -896,9 +1128,13 @@ BOOST_AUTO_TEST_CASE(unary_member_function_with_lvalue)
 {
   S s;
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int &), S &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int &), S &, int &, int &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   {
     void (S::*pmf)(int &) = &S::mf1l;
@@ -916,31 +1152,45 @@ BOOST_AUTO_TEST_CASE(unary_member_function_with_lvalue)
   static_assert(!noexcept(cradle::invoke(&S::mf1l, s, gi)), "");
   cradle::invoke(&S::mf1l, s, gi);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int &), S const &, int &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke(&S::mf1l, std::move(s), gi), void);
   static_assert(!noexcept(cradle::invoke(&S::mf1l, std::move(s), gi)), "");
   cradle::invoke(&S::mf1l, std::move(s), gi);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::mf1l, &s, gi), void);
   static_assert(!noexcept(cradle::invoke(&S::mf1l, &s, gi)), "");
   cradle::invoke(&S::mf1l, &s, gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int &), S const *, int &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   {
     std::shared_ptr<S> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::mf1l, p, gi), void);
     static_assert(!noexcept(cradle::invoke(&S::mf1l, p, gi)), "");
     cradle::invoke(&S::mf1l, p, gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   }
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int &), std::shared_ptr<S const> &, int &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int &), S &, int const &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int &), S &, int &&>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke<void>(&S::mf1l, s, gi), void);
   static_assert(!noexcept(cradle::invoke<void>(&S::mf1l, s, gi)), "");
@@ -963,9 +1213,13 @@ BOOST_AUTO_TEST_CASE(unary_member_function_with_const_lvalue)
 {
   S s;
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int const &), S &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int const &), S &, int &, int &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   {
     void (S::*pmf)(int const &) = &S::mf1cl;
@@ -983,27 +1237,37 @@ BOOST_AUTO_TEST_CASE(unary_member_function_with_const_lvalue)
   static_assert(!noexcept(cradle::invoke(&S::mf1cl, s, gi)), "");
   cradle::invoke(&S::mf1cl, s, gi);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int const &), S const &, int &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke(&S::mf1cl, std::move(s), gi), void);
   static_assert(!noexcept(cradle::invoke(&S::mf1cl, std::move(s), gi)), "");
   cradle::invoke(&S::mf1cl, std::move(s), gi);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::mf1cl, &s, gi), void);
   static_assert(!noexcept(cradle::invoke(&S::mf1cl, &s, gi)), "");
   cradle::invoke(&S::mf1cl, &s, gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int const &), S const *, int &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   {
     std::shared_ptr<S> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::mf1cl, p, gi), void);
     static_assert(!noexcept(cradle::invoke(&S::mf1cl, p, gi)), "");
     cradle::invoke(&S::mf1cl, p, gi);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   }
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int const &), std::shared_ptr<S const> &, int &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke(&S::mf1cl, s, cradle::as_const(gi)), void);
   static_assert(!noexcept(cradle::invoke(&S::mf1cl, s, cradle::as_const(gi))), "");
@@ -1034,9 +1298,13 @@ BOOST_AUTO_TEST_CASE(unary_member_function_with_xvalue)
 {
   S s;
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int &&), S &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int &&), S &, int, int>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   {
     void (S::*pmf)(int &&) = &S::mf1x;
@@ -1054,31 +1322,45 @@ BOOST_AUTO_TEST_CASE(unary_member_function_with_xvalue)
   static_assert(!noexcept(cradle::invoke(&S::mf1x, s, std::move(gi))), "");
   cradle::invoke(&S::mf1x, s, std::move(gi));
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int &&), S const &, int>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke(&S::mf1x, std::move(s), std::move(gi)), void);
   static_assert(!noexcept(cradle::invoke(&S::mf1x, std::move(s), std::move(gi))), "");
   cradle::invoke(&S::mf1x, std::move(s), std::move(gi));
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::mf1x, &s, std::move(gi)), void);
   static_assert(!noexcept(cradle::invoke(&S::mf1x, &s, std::move(gi))), "");
   cradle::invoke(&S::mf1x, &s, std::move(gi));
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int &&), S const *, int>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   {
     std::shared_ptr<S> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::mf1x, p, std::move(gi)), void);
     static_assert(!noexcept(cradle::invoke(&S::mf1x, p, std::move(gi))), "");
     cradle::invoke(&S::mf1x, p, std::move(gi));
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   }
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int &&), std::shared_ptr<S const> &, int>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int &&), S &, int &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (S::*)(int &&), S &, int const &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   ASSERT_SAME(cradle::invoke<void>(&S::mf1x, s, std::move(gi)), void);
   static_assert(!noexcept(cradle::invoke<void>(&S::mf1x, s, std::move(gi))), "");
@@ -1127,28 +1409,36 @@ BOOST_AUTO_TEST_CASE(member_variable)
   static_assert(noexcept(cradle::invoke(&S::mv, std::move(s))), "");
   BOOST_CHECK_EQUAL(&static_cast<int const &>(cradle::invoke(&S::mv, std::move(s))), &s.mv);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::mv, &s), int &);
   static_assert(noexcept(cradle::invoke(&S::mv, &s)), "");
   BOOST_CHECK_EQUAL(&cradle::invoke(&S::mv, &s), &s.mv);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::mv, &cradle::as_const(s)), int const &);
   static_assert(noexcept(cradle::invoke(&S::mv, &cradle::as_const(s))), "");
   BOOST_CHECK_EQUAL(&cradle::invoke(&S::mv, &cradle::as_const(s)), &s.mv);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   {
     std::shared_ptr<S> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::mv, p), int &);
     static_assert(noexcept(cradle::invoke(&S::mv, p)), "");
     BOOST_CHECK_EQUAL(&cradle::invoke(&S::mv, p), &p->mv);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   }
 
   {
     std::shared_ptr<S const> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::mv, p), int const &);
     static_assert(noexcept(cradle::invoke(&S::mv, p)), "");
     BOOST_CHECK_EQUAL(&cradle::invoke(&S::mv, p), &p->mv);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   }
 
   ASSERT_SAME(cradle::invoke<int &>(&S::mv, s), int &);
@@ -1173,27 +1463,39 @@ BOOST_AUTO_TEST_CASE(member_variable)
   static_assert(noexcept(cradle::invoke<void const>(&S::mv, s)), "");
   cradle::invoke<void const>(&S::mv, s);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<int &>(&S::mv, &s), int &);
   static_assert(noexcept(cradle::invoke<int &>(&S::mv, &s)), "");
   BOOST_CHECK_EQUAL(&cradle::invoke<int &>(&S::mv, &s), &s.mv);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<int const &>(&S::mv, &s), int const &);
   static_assert(noexcept(cradle::invoke<int const &>(&S::mv, &s)), "");
   BOOST_CHECK_EQUAL(&cradle::invoke<int const &>(&S::mv, &s), &s.mv);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<int>(&S::mv, &s), int);
   static_assert(noexcept(cradle::invoke<int>(&S::mv, &s)), "");
   BOOST_CHECK_EQUAL(cradle::invoke<int>(&S::mv, &s), s.mv);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test_explicit<int &&, int S::*, S *>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<void>(&S::mv, &s), void);
   static_assert(noexcept(cradle::invoke<void>(&S::mv, &s)), "");
   cradle::invoke<void>(&S::mv, &s);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<void const>(&S::mv, &s), void);
   static_assert(noexcept(cradle::invoke<void const>(&S::mv, &s)), "");
   cradle::invoke<void const>(&S::mv, &s);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 }
 
 BOOST_AUTO_TEST_CASE(const_member_variable)
@@ -1226,28 +1528,36 @@ BOOST_AUTO_TEST_CASE(const_member_variable)
   static_assert(noexcept(cradle::invoke(&S::cmv, std::move(s))), "");
   BOOST_CHECK_EQUAL(&static_cast<int const &>(cradle::invoke(&S::cmv, std::move(s))), &s.cmv);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::cmv, &s), int const &);
   static_assert(noexcept(cradle::invoke(&S::cmv, &s)), "");
   BOOST_CHECK_EQUAL(&cradle::invoke(&S::cmv, &s), &s.cmv);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&S::cmv, &cradle::as_const(s)), int const &);
   static_assert(noexcept(cradle::invoke(&S::cmv, &cradle::as_const(s))), "");
   BOOST_CHECK_EQUAL(&cradle::invoke(&S::cmv, &cradle::as_const(s)), &s.cmv);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   {
     std::shared_ptr<S> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::cmv, p), int const &);
     static_assert(noexcept(cradle::invoke(&S::cmv, p)), "");
     BOOST_CHECK_EQUAL(&cradle::invoke(&S::cmv, p), &p->cmv);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   }
 
   {
     std::shared_ptr<S const> p = std::make_shared<S>();
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
     ASSERT_SAME(cradle::invoke(&S::cmv, p), int const &);
     static_assert(noexcept(cradle::invoke(&S::cmv, p)), "");
     BOOST_CHECK_EQUAL(&cradle::invoke(&S::cmv, p), &p->cmv);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   }
 
   ASSERT_SAME(cradle::invoke<int const &>(&S::cmv, s), int const &);
@@ -1270,25 +1580,37 @@ BOOST_AUTO_TEST_CASE(const_member_variable)
   static_assert(noexcept(cradle::invoke<void const>(&S::cmv, s)), "");
   cradle::invoke<void const>(&S::cmv, s);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<int const &>(&S::cmv, &s), int const &);
   static_assert(noexcept(cradle::invoke<int const &>(&S::cmv, &s)), "");
   BOOST_CHECK_EQUAL(&cradle::invoke<int const &>(&S::cmv, &s), &s.cmv);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<int>(&S::cmv, &s), int);
   static_assert(noexcept(cradle::invoke<int>(&S::cmv, &s)), "");
   BOOST_CHECK_EQUAL(cradle::invoke<int>(&S::cmv, &s), s.cmv);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test_explicit<int &, int const S::*, S *>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test_explicit<int &&, int const S::*, S *>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<void>(&S::cmv, &s), void);
   static_assert(noexcept(cradle::invoke<void>(&S::cmv, &s)), "");
   cradle::invoke<void>(&S::cmv, &s);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke<void const>(&S::cmv, &s), void);
   static_assert(noexcept(cradle::invoke<void const>(&S::cmv, &s)), "");
   cradle::invoke<void const>(&S::cmv, &s);
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 }
 
 namespace{
@@ -1447,63 +1769,116 @@ BOOST_AUTO_TEST_CASE(unary_function_move_only)
 {
   std::unique_ptr<int> p;
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&nt1v, nullptr), void);
   static_assert(noexcept(cradle::invoke(&nt1v, nullptr)), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   gi = 0;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+  (*&nt1v)(nullptr);
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   cradle::invoke(&nt1v, nullptr);
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(gi, 1);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (*)(std::unique_ptr<int>), std::unique_ptr<int> &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (*)(std::unique_ptr<int>), std::unique_ptr<int> const &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&nt1v, std::move(p)), void);
   static_assert(noexcept(cradle::invoke(&nt1v, std::move(p))), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   gi = 1;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+  (*&nt1v)(std::move(p));
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   cradle::invoke(&nt1v, std::move(p));
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(gi, 2);
 
-
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&nt1lr, p), void);
   static_assert(noexcept(cradle::invoke(&nt1lr, p)), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   gi = 2;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+  (*&nt1lr)(p);
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   cradle::invoke(&nt1lr, p);
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(gi, 4);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (*)(std::unique_ptr<int> &), std::unique_ptr<int> &&>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (*)(std::unique_ptr<int> &), std::unique_ptr<int> const &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&nt1clr, p), void);
   static_assert(noexcept(cradle::invoke(&nt1clr, p)), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   gi = 3;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+  (*&nt1clr)(p);
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   cradle::invoke(&nt1clr, p);
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(gi, 7);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&nt1clr, cradle::as_const(p)), void);
   static_assert(noexcept(cradle::invoke(&nt1clr, cradle::as_const(p))), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   gi = 4;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+  (*&nt1clr)(cradle::as_const(p));
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   cradle::invoke(&nt1clr, cradle::as_const(p));
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(gi, 8);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&nt1clr, std::unique_ptr<int>()), void);
   static_assert(noexcept(cradle::invoke(&nt1clr, std::unique_ptr<int>())), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   gi = 5;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+  (*&nt1clr)(std::unique_ptr<int>());
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   cradle::invoke(&nt1clr, std::unique_ptr<int>());
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(gi, 9);
 
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   ASSERT_SAME(cradle::invoke(&nt1rr, std::unique_ptr<int>()), void);
   static_assert(noexcept(cradle::invoke(&nt1rr, std::unique_ptr<int>())), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   gi = 6;
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
+  (*&nt1rr)(std::unique_ptr<int>());
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   cradle::invoke(&nt1rr, std::unique_ptr<int>());
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   BOOST_CHECK_EQUAL(gi, 14);
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!test<void (*)(std::unique_ptr<int> &&) noexcept, std::unique_ptr<int> &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(
     !test<void (*)(std::unique_ptr<int> &&) noexcept, std::unique_ptr<int> const &>(0), "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -9,6 +9,7 @@
 #include <cradle/utility/assert_precondition.hpp>
 #include <cradle/exception/throw_exception.hpp>
 #include <cradle/type_traits/enable_if_volatile.hpp>
+#include <cradle/config/config.hpp>
 #include <boost/detail/workaround.hpp>
 #include <type_traits>
 #include <memory>
@@ -26,12 +27,12 @@ class memory_resource_adaptor_impl_ final
   : public cradle::memory_resource
 {
 private:
-#if BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4009000)
   // A workaround for http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56019
   typedef ::max_align_t max_align_type_;
-#else // BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
-  typedef std::max_align_t max_align_type_
-#endif // BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4009000)
+  typedef std::max_align_t max_align_type_;
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4009000)
 
 private:
   typedef AlignedAllocator aligned_allocator_type_;
@@ -97,9 +98,9 @@ private:
     CRADLE_ASSERT_PRECONDITION(alignment > 0u);
     max_align_type_ *p
       = traits_type_::allocate(a_, (n - 1) / sizeof(max_align_type_) + 1);
-#if BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4010000)
     // `std::align' is not implemented.
-#else // BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4010000)
     {
       max_align_type_ *q = p;
       std::size_t space = n;
@@ -112,7 +113,7 @@ private:
           std::bad_alloc("requested alignment could not be satisfied"));
       }
     }
-#endif // BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4009000)
     return static_cast<void *>(p);
   }
 
@@ -149,18 +150,18 @@ private:
 
 } // namespace detail_
 
-#if BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4009000)
 // A workaround for http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56019
 template<typename Allocator>
 using memory_resource_adaptor
   = cradle::detail_::memory_resource_adaptor_impl_<
-      std::allocator_traits<Allocator>::rebind_alloc< ::max_align_t> >;
-#else // BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
+      typename std::allocator_traits<Allocator>::template rebind_alloc< ::max_align_t> >;
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4009000)
 template<typename Allocator>
 using memory_resource_adaptor
   = cradle::detail_::memory_resource_adaptor_impl_<
-      std::allocator_traits<Allocator>::rebind_alloc<std::max_align_t> >;
-#endif // BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
+      typename std::allocator_traits<Allocator>::template rebind_alloc<std::max_align_t> >;
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4009000)
 
 } // namespace cradle
 

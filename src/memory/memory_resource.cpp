@@ -57,11 +57,12 @@ memory_resource::share_inner_memory_resource()
 // via an exception, then there should not be any successful call.
 std::shared_ptr<memory_resource> get_default_memory_resource()
 {
-#if BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4009000)
+  // A workaround for http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56019
   typedef ::max_align_t max_align_type;
-#else // BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4009000)
   typedef std::max_align_t max_align_type;
-#endif // BOOST_WORKAROUND(__GLIBCXX__, < 20140000)
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4009000)
   typedef std::allocator<max_align_type> allocator_type;
   typedef memory_resource_adaptor<allocator_type> adaptor_type;
   static std::shared_ptr<memory_resource> p
