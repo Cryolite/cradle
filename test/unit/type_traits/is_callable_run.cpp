@@ -4,7 +4,10 @@
 
 #include <cradle/type_traits/is_callable.hpp>
 
+#include <cradle/config/config.hpp>
+
 #include <boost/test/unit_test.hpp>
+#include <boost/detail/workaround.hpp>
 #include <memory>
 
 
@@ -23,8 +26,11 @@ BOOST_AUTO_TEST_CASE(main)
 {
   static_assert(!cradle::is_callable<void (S::*)()>::value, "");
   static_assert(cradle::is_callable<void (S::*)(), S &>::value, "");
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!cradle::is_callable<void (S::*)(), S const &>::value, "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(cradle::is_callable<void (S::*)(), S &&>::value, "");
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(cradle::is_callable<void (S::*)(), S *>::value, "");
   static_assert(!cradle::is_callable<void (S::*)(), S const *>::value, "");
   static_assert(
@@ -33,11 +39,13 @@ BOOST_AUTO_TEST_CASE(main)
     !cradle::is_callable<void (S::*)(), std::unique_ptr<S const> >::value,
     "");
   static_assert(!cradle::is_callable<void (S::*)(), S &, int>::value, "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(!cradle::is_callable<void (S::*)() const>::value, "");
   static_assert(cradle::is_callable<void (S::*)() const, S &>::value, "");
   static_assert(
     cradle::is_callable<void (S::*)() const, S const &>::value, "");
   static_assert(cradle::is_callable<void (S::*)() const, S &&>::value, "");
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(cradle::is_callable<void (S::*)() const, S *>::value, "");
   static_assert(
     cradle::is_callable<void (S::*)() const, S const *>::value, "");
@@ -50,6 +58,7 @@ BOOST_AUTO_TEST_CASE(main)
     "");
   static_assert(
     !cradle::is_callable<void (S::*)() const, S &, int>::value, "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   static_assert(cradle::is_callable<int (S::*)(), S &>::value, "");
   static_assert(cradle::is_callable<int &(S::*)(), S &>::value, "");
@@ -97,10 +106,12 @@ BOOST_AUTO_TEST_CASE(non_copy_constructive)
 
   static_assert(
     cradle::is_callable<void (S::*)(int &), S &, int &>::value, "");
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(
     !cradle::is_callable<void (S::*)(int &), S &, int const &>::value, "");
   static_assert(
     !cradle::is_callable<void (S::*)(int &), S &, int &&>::value, "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   static_assert(
     cradle::is_callable<void (S::*)(int const &), S &, int &>::value, "");
@@ -110,13 +121,16 @@ BOOST_AUTO_TEST_CASE(non_copy_constructive)
   static_assert(
     cradle::is_callable<void (S::*)(int const &), S &, int &&>::value, "");
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(
     !cradle::is_callable<void (S::*)(int &&), S &, int &>::value, "");
   static_assert(
     !cradle::is_callable<void (S::*)(int &&), S &, int const &>::value, "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(
     cradle::is_callable<void (S::*)(int &&), S &, int &&>::value, "");
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(
     !cradle::is_callable<
       void (S::*)(std::unique_ptr<int>), S &, std::unique_ptr<int> &>::value,
@@ -126,6 +140,7 @@ BOOST_AUTO_TEST_CASE(non_copy_constructive)
       void (S::*)(std::unique_ptr<int>), S &,
       std::unique_ptr<int> const &>::value,
     "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(
     cradle::is_callable<
       void (S::*)(std::unique_ptr<int>),
@@ -137,6 +152,7 @@ BOOST_AUTO_TEST_CASE(non_copy_constructive)
       void (S::*)(std::unique_ptr<int> &),
       S &, std::unique_ptr<int> &>::value,
     "");
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(
     !cradle::is_callable<
       void (S::*)(std::unique_ptr<int> &),
@@ -147,6 +163,7 @@ BOOST_AUTO_TEST_CASE(non_copy_constructive)
       void (S::*)(std::unique_ptr<int> &),
       S &, std::unique_ptr<int> &&>::value,
     "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   static_assert(
     cradle::is_callable<
@@ -164,6 +181,7 @@ BOOST_AUTO_TEST_CASE(non_copy_constructive)
       S &, std::unique_ptr<int> &&>::value,
     "");
 
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(
     !cradle::is_callable<
       void (S::*)(std::unique_ptr<int> &&),
@@ -174,6 +192,7 @@ BOOST_AUTO_TEST_CASE(non_copy_constructive)
       void (S::*)(std::unique_ptr<int> &&),
       S &, std::unique_ptr<int> const &>::value,
     "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(
     cradle::is_callable<
       void (S::*)(std::unique_ptr<int> &&),
@@ -184,12 +203,14 @@ BOOST_AUTO_TEST_CASE(non_copy_constructive)
   static_assert(cradle::is_callable<int S::*, S &>::value, "");
   static_assert(cradle::is_callable<int S::*, S const &>::value, "");
   static_assert(cradle::is_callable<int S::*, S &&>::value, "");
+#if !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
   static_assert(cradle::is_callable<int S::*, S *>::value, "");
   static_assert(cradle::is_callable<int S::*, S const *>::value, "");
   static_assert(
     cradle::is_callable<int S::*, std::unique_ptr<S> >::value, "");
   static_assert(
     cradle::is_callable<int S::*, std::unique_ptr<S const> >::value, "");
+#endif // !BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4008000)
 
   static_assert(
     cradle::is_callable<std::unique_ptr<int> S::*, S &>::value, "");
