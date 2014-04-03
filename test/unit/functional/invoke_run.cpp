@@ -1,20 +1,13 @@
 #include <cradle/functional/invoke.hpp>
 
 #include <cradle/utility/as_const.hpp>
+#include <cradle/utility/suppress_unused_variable_warning.hpp>
 #include <cradle/config/config.hpp>
 #include <boost/test/unit_test.hpp>
 #include <boost/detail/workaround.hpp>
 #include <memory>
 #include <type_traits>
 #include <utility>
-
-namespace cradle{
-
-template<typename T>
-void suppress_unused_variable_warning(T const volatile &)
-{}
-
-} // namespace cradle
 
 BOOST_AUTO_TEST_SUITE(functional)
 
