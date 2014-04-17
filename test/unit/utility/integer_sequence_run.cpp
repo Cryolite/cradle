@@ -11,7 +11,7 @@
 
 BOOST_AUTO_TEST_SUITE(utility)
 
-BOOST_AUTO_TEST_SUITE(as_const)
+BOOST_AUTO_TEST_SUITE(integer_sequence)
 
 namespace{
 
