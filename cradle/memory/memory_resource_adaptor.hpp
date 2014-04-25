@@ -98,9 +98,9 @@ private:
     CRADLE_ASSERT_PRECONDITION(alignment > 0u);
     max_align_type_ *p
       = traits_type_::allocate(a_, (n - 1) / sizeof(max_align_type_) + 1);
-#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4010000)
+#if BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4011000)
     // `std::align' is not implemented.
-#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4010000)
+#else // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4011000)
     {
       max_align_type_ *q = p;
       std::size_t space = n;
@@ -113,7 +113,7 @@ private:
           std::bad_alloc("requested alignment could not be satisfied"));
       }
     }
-#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4009000)
+#endif // BOOST_WORKAROUND(CRADLE_GCC_FULL_VERSION, < 4011000)
     return static_cast<void *>(p);
   }
 
