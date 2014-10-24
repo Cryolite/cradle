@@ -13,16 +13,18 @@ explicit "$(.here)/index.html" ;
 
 rule genhtml ( targets * : sources * : properties * )
 {
-  local .here_absolute = [ path.root [ path.parent [ modules.binding "$(__name__)" ] ] [ path.pwd ] ] ;
-  local .here_relative = [ path.relative "$(.here_absolute)" "$(CRADLE_ROOT)" ] ;
+  local .here_relative = [ path.parent [ modules.binding "$(__name__)" ] ] ;
   HERE on $(targets) = [ path.native "$(.here_relative)" ] ;
+  local .here_absolute = [ path.root "$(.here_relative)" [ path.pwd ] ] ;
+  local .here_from_root = [ path.relative "$(.here_absolute)" "$(CRADLE_ROOT)" ] ;
+  HERE_FROM_ROOT on $(targets) = [ path.native "$(.here_from_root)" ] ;
 }
 actions genhtml
 {
 exec bash -s << 'EOS'
   LINENO_ADJ=`grep -Fn 3f08fc4a-f996-4ab5-a766-aeb09b08d60e '$(HERE)/jamfile' | grep -Eo '^[[:digit:]]+'`
   LINENO_ADJ=`expr $LINENO_ADJ - $LINENO + 1`
-  PS4='+$(HERE)/jamfile:`expr $LINENO + $LINENO_ADJ`: '
+  PS4='+$(HERE_FROM_ROOT)/jamfile:`expr $LINENO + $LINENO_ADJ`: '
   set -ex
   lcov -c -d '$(CRADLE_ROOT)/bin' -o '$(HERE)/all.info' -b '$(CRADLE_ROOT)' --config-file '$(HERE)/lcovrc'
   lcov -e '$(HERE)/all.info' '$(CRADLE_ROOT)/*' -o '$(HERE)/cradle.info' --config-file '$(HERE)/lcovrc'
