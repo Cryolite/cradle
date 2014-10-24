@@ -1,11 +1,5 @@
 project cradle/test ;
 
-import path ;
-import regex ;
-
-local .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
-.here = [ path.make "$(.here)" ] ;
-
 if "$(CRADLE_WITH_INTRO)" = yes {
   alias unit
     : unit//do_not_invoke_this_target_directly

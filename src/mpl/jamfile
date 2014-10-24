@@ -1,15 +1,18 @@
 project cradle/src/mpl
   ;
 
+import modules ;
 import path ;
-import regex ;
 
-local .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
-.here = [ path.make "$(.here)" ] ;
+# `[ modules.binding "$(__name__)" ]` returns the relative path to this
+# jamfile from the current working directory, as of Boost.Build 2014.03-svn.
+local .here = [ path.root [ path.parent [ modules.binding "$(__name__)" ] ] [ path.pwd ] ] ;
 
 local .objs ;
-
 for local i in [ path.glob "$(.here)" : *.cpp ] {
+  # The paths to source files are passed to GCC as absolute ones because
+  # Gcovr seems to require absolute filenames in order to produce correct
+  # branch coverage.
   obj "$(i:B).obj" : "$(i)" : $(CRADLE_COMPILE_PROPERTIES) ;
   explicit "$(i:B).obj" ;
   .objs += "$(i:B).obj" ;

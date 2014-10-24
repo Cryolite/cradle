@@ -1,12 +1,12 @@
 project cradle/test/coverage ;
 
 import feature ;
+import modules ;
 import path ;
-import regex ;
 
-.here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
-.here = [ path.make "$(.here)" ] ;
-.here_relative = [ path.relative "$(.here)" "$(CRADLE_ROOT)" ] ;
+# `[ modules.binding "$(__name__)" ]` returns the relative path to this
+# jamfile from the current working directory, as of Boost.Build 2014.03-svn.
+local .here = [ path.root [ path.parent [ modules.binding "$(__name__)" ] ] [ path.pwd ] ] ;
 
 constant NOARCH_PROPERTIES
   : [ feature.defaults <host-os> ]
