@@ -8,14 +8,15 @@ project cradle/test/unit/unicode
     <library>/cradle/src/unicode//link
   ;
 
+import modules ;
 import path ;
-import regex ;
 if "$(CRADLE_WITH_INTRO)" = yes {
   import site-config ;
 }
 
-local .here = [ regex.match "Jamfile<(.*)>" : "$(__name__)" : 1 ] ;
-.here = [ path.make "$(.here)" ] ;
+# `[ modules.binding "$(__name__)" ]` returns the relative path to this
+# jamfile from the current working directory, as of Boost.Build 2014.03-svn.
+local .here = [ path.root [ path.parent [ modules.binding "$(__name__)" ] ] [ path.pwd ] ] ;
 
 local .direct-subdirs ;
 for local i in [ path.glob "$(.here)" : * ] {
@@ -25,8 +26,11 @@ for local i in [ path.glob "$(.here)" : * ] {
 }
 
 local .objs ;
-
-for local i in [ path.glob "$(.here)" : "*_run.cpp" ] {
+for local i in [ path.glob "$(.here)" : *_run.cpp ] {
+  # The paths to source files are passed to GCC as absolute ones because
+  # Gcovr seems to require absolute filenames in order to produce correct
+  # branch coverage. Therefore, the source `"$(i)"` rather than
+  # `"$(i:B).cpp"` is specified in the following target.
   obj "$(i:B).obj"
     : "$(i)"
     : $(CRADLE_COMPILE_PROPERTIES)

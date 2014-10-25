@@ -66,13 +66,17 @@ constant CRADLE_XUNIT_LOG_FORMAT_RUN_PROPERTIES
   ;
 
 if "$(CRADLE_WITH_INTRO)" = yes {
+  # The paths to include files are passed to GCC as absolute ones because
+  # Gcovr seems to require absolute filenames in order to produce correct
+  # branch coverage. Therefore, `<include>"$(CRADLE_ROOT)"` rather than
+  # `<include>.` is specified in the following project requirements.
   project cradle
     : requirements
       <std>c++11
       <runtime-link>shared
       <threading>single:<define>CRADLE_SINGLE_THREADING
       <threading>multi:<define>CRADLE_MULTI_THREADING
-      <include>.
+      <include>"$(CRADLE_ROOT)"
       <warnings>all
       <c++-template-depth>1024
       <hardcode-dll-paths>false
@@ -99,7 +103,7 @@ else {
       <runtime-link>shared
       <threading>single:<define>CRADLE_SINGLE_THREADING
       <threading>multi:<define>CRADLE_MULTI_THREADING
-      <include>.
+      <include>"$(CRADLE_ROOT)"
       <warnings>all
       <c++-template-depth>1024
       <hardcode-dll-paths>false
